@@ -12,12 +12,4 @@ public class Nodo<T> {
         return dato;
     }
 
-    public void setDato( T datoNuevo){
-        dato = datoNuevo;
-    }
-
-    public Nodo<T> getSiguiente(){
-        return siguiente;
-    }
-
 }

@@ -5,23 +5,39 @@ import java.util.function.Predicate;
 
 import ucu.edu.aed.tda.TDALista;
 
-/**
- * Define un Tipo de Dato Abstracto (TDA) Lista genérica.
- *
- * <p>Una lista permite almacenar elementos en una secuencia ordenada por posición,
- * admitiendo inserciones, accesos, eliminaciones, búsquedas y operaciones de ordenamiento.</p>
- *
- * <p>Las posiciones de los elementos se interpretan mediante índices enteros.
- * Salvo que la implementación indique lo contrario, se asume indexación basada en 0.</p>
- *
- * @param <T> el tipo de los elementos almacenados en la lista
- */
+public class ListaDobleEnlazada<T> implements TDALista<T> {
 
-public class ListaEnlazada<T> implements TDALista<T> {
-
-    protected Nodo<T> cabeza;
-    protected Nodo<T> cola;
+    protected NodoDoble<T> cabeza;
+    protected NodoDoble<T> cola;
     protected int tamanio;
+
+    /**
+     * Busca el nodo ubicado en la posición indicada, recorriendo desde
+     * el extremo más cercano (cabeza o cola) según convenga.
+     *
+     * <p>Costo O(n) en el peor caso, pero como máximo tamaño/2 pasos,
+     * a diferencia de una lista simplemente enlazada que siempre debe
+     * recorrer desde la cabeza.</p>
+     *
+     * @param index la posición del nodo a recuperar (ya validada por el llamador)
+     * @return el nodo ubicado en esa posición
+     */
+    private NodoDoble<T> obtenerNodo(int index){
+        if (index < tamanio / 2){
+            NodoDoble<T> actual = cabeza;
+            for (int i = 0; i < index; i++){
+                actual = actual.siguiente;
+            }
+            return actual;
+        }
+        else{
+            NodoDoble<T> actual = cola;
+            for (int i = tamanio - 1; i > index; i--){
+                actual = actual.anterior;
+            }
+            return actual;
+        }
+    }
 
     /**
      * Agrega un elemento al final de la lista.
@@ -30,12 +46,13 @@ public class ListaEnlazada<T> implements TDALista<T> {
      */
     @Override
     public void agregar(T elem){
-        Nodo<T> nuevoNodo = new Nodo<>(elem);
+        NodoDoble<T> nuevoNodo = new NodoDoble<>(elem);
         if (cabeza == null){
             cabeza = nuevoNodo;
             cola = nuevoNodo;
         }
         else{
+            nuevoNodo.anterior = cola;
             cola.siguiente = nuevoNodo;
             cola = nuevoNodo;
         }
@@ -52,33 +69,30 @@ public class ListaEnlazada<T> implements TDALista<T> {
      * @param elem el elemento a agregar
      * @throws IndexOutOfBoundsException si el índice está fuera de rango
      */
-
     @Override
     public void agregar(int index, T elem){
         if (index < 0 || index > tamanio){
             throw new IndexOutOfBoundsException();
         }
-        Nodo<T> nuevoNodo = new Nodo<>(elem);
+        if (index == tamanio){
+            agregar(elem);
+            return;
+        }
         if (index == 0){
+            NodoDoble<T> nuevoNodo = new NodoDoble<>(elem);
             nuevoNodo.siguiente = cabeza;
+            cabeza.anterior = nuevoNodo;
             cabeza = nuevoNodo;
-            if (tamanio == 0){
-                cola = nuevoNodo;
-            }
+            tamanio++;
+            return;
         }
-        else{
-            int contador = 0;
-            Nodo<T> actual = cabeza;
-            while (contador < index - 1){
-                actual = actual.siguiente;
-                contador++;
-            }
-            nuevoNodo.siguiente = actual.siguiente;
-            actual.siguiente = nuevoNodo;
-            if (nuevoNodo.siguiente == null){
-                cola = nuevoNodo;
-            }
-        }
+        NodoDoble<T> siguienteNodo = obtenerNodo(index);
+        NodoDoble<T> anteriorNodo = siguienteNodo.anterior;
+        NodoDoble<T> nuevoNodo = new NodoDoble<>(elem);
+        nuevoNodo.anterior = anteriorNodo;
+        nuevoNodo.siguiente = siguienteNodo;
+        anteriorNodo.siguiente = nuevoNodo;
+        siguienteNodo.anterior = nuevoNodo;
         tamanio++;
     }
 
@@ -89,19 +103,12 @@ public class ListaEnlazada<T> implements TDALista<T> {
      * @return el elemento ubicado en la posición indicada
      * @throws IndexOutOfBoundsException si el índice está fuera de rango
      */
-
     @Override
     public T obtener(int index){
         if (index < 0 || index >= tamanio){
             throw new IndexOutOfBoundsException();
         }
-        Nodo<T> actual = cabeza;
-        int contador = 0;
-        while (contador != index){
-            actual = actual.siguiente;
-            contador++;
-        }
-        return actual.getDato();
+        return obtenerNodo(index).getDato();
     }
 
     /**
@@ -111,43 +118,40 @@ public class ListaEnlazada<T> implements TDALista<T> {
      * una posición hacia la izquierda.</p>
      *
      * <p>Comportamiento "Quitar": el nodo se desconecta de la lista y
-     * su campo siguiente se deja en null para evitar referencias
-     * residuales hacia el resto de la lista.</p>
+     * sus campos siguiente/anterior se dejan en null para evitar
+     * referencias residuales hacia el resto de la lista.</p>
      *
      * @param index la posición del elemento a remover
      * @return el elemento removido
      * @throws IndexOutOfBoundsException si el índice está fuera de rango
      */
-
     @Override
     public T remover(int index){
         if (index < 0 || index >= tamanio){
             throw new IndexOutOfBoundsException();
         }
-        if (index == 0){
-            Nodo<T> nodoRemovido = cabeza;
-            cabeza = cabeza.siguiente;
-            nodoRemovido.siguiente = null;
-            if (cabeza == null){
-                cola = null;
-            }
-            tamanio--;
-            return nodoRemovido.getDato();
+        NodoDoble<T> nodoRemovido = obtenerNodo(index);
+        NodoDoble<T> anteriorNodo = nodoRemovido.anterior;
+        NodoDoble<T> siguienteNodo = nodoRemovido.siguiente;
+
+        if (anteriorNodo != null){
+            anteriorNodo.siguiente = siguienteNodo;
         }
-        Nodo<T> actual = cabeza;
-        int contador = 0;
-        while (contador < index - 1){
-            actual = actual.siguiente;
-            contador++;
+        else{
+            cabeza = siguienteNodo;
         }
-        Nodo<T> nodoASacar = actual.siguiente;
-        actual.siguiente = actual.siguiente.siguiente;
-        nodoASacar.siguiente = null;
-        if (actual.siguiente == null){
-            cola = actual;
+
+        if (siguienteNodo != null){
+            siguienteNodo.anterior = anteriorNodo;
         }
+        else{
+            cola = anteriorNodo;
+        }
+
+        nodoRemovido.siguiente = null;
+        nodoRemovido.anterior = null;
         tamanio--;
-        return nodoASacar.getDato();
+        return nodoRemovido.getDato();
     }
 
     /**
@@ -157,38 +161,37 @@ public class ListaEnlazada<T> implements TDALista<T> {
      * por la implementación, normalmente mediante {@code equals}.</p>
      *
      * <p>Comportamiento "Eliminar": el nodo se desconecta de la lista y
-     * su campo siguiente se deja en null para evitar referencias
-     * residuales hacia el resto de la lista.</p>
+     * sus campos siguiente/anterior se dejan en null para evitar
+     * referencias residuales hacia el resto de la lista.</p>
      *
      * @param elem el elemento a remover
      * @return {@code true} si el elemento fue encontrado y removido;
      *         {@code false} en caso contrario
      */
-
     @Override
     public boolean remover(T elem){
-        if (cabeza == null){
-            return false;
-        }
-        if (cabeza.getDato().equals(elem)){
-            Nodo<T> nodoRemovido = cabeza;
-            cabeza = cabeza.siguiente;
-            nodoRemovido.siguiente = null;
-            if (cabeza == null){
-                cola = null;
-            }
-            tamanio--;
-            return true;
-        }
-        Nodo<T> actual = cabeza;
-        while (actual.siguiente != null){
-            if (actual.siguiente.getDato().equals(elem)){
-                Nodo<T> nodoRemovido = actual.siguiente;
-                actual.siguiente = actual.siguiente.siguiente;
-                nodoRemovido.siguiente = null;
-                if (actual.siguiente == null){
-                    cola = actual;
+        NodoDoble<T> actual = cabeza;
+        while (actual != null){
+            if (actual.getDato().equals(elem)){
+                NodoDoble<T> anteriorNodo = actual.anterior;
+                NodoDoble<T> siguienteNodo = actual.siguiente;
+
+                if (anteriorNodo != null){
+                    anteriorNodo.siguiente = siguienteNodo;
                 }
+                else{
+                    cabeza = siguienteNodo;
+                }
+
+                if (siguienteNodo != null){
+                    siguienteNodo.anterior = anteriorNodo;
+                }
+                else{
+                    cola = anteriorNodo;
+                }
+
+                actual.siguiente = null;
+                actual.anterior = null;
                 tamanio--;
                 return true;
             }
@@ -200,17 +203,13 @@ public class ListaEnlazada<T> implements TDALista<T> {
     /**
      * Determina si la lista contiene el elemento indicado.
      *
-     * <p>La comparación del elemento queda sujeta al criterio definido
-     * por la implementación, normalmente mediante {@code equals}.</p>
-     *
      * @param elem el elemento a buscar
      * @return {@code true} si el elemento está presente en la lista;
      *         {@code false} en caso contrario
      */
-
     @Override
     public boolean contiene(T elem){
-        Nodo<T> actual = cabeza;
+        NodoDoble<T> actual = cabeza;
         while (actual != null){
             if (actual.getDato().equals(elem)){
                 return true;
@@ -223,17 +222,13 @@ public class ListaEnlazada<T> implements TDALista<T> {
     /**
      * Retorna el índice de la primera ocurrencia del elemento indicado.
      *
-     * <p>La comparación del elemento queda sujeta al criterio definido
-     * por la implementación, normalmente mediante {@code equals}.</p>
-     *
      * @param elem el elemento a buscar
      * @return el índice de la primera ocurrencia del elemento, o {@code -1}
      *         si el elemento no se encuentra en la lista
      */
-
     @Override
     public int indiceDe(T elem){
-        Nodo<T> actual = cabeza;
+        NodoDoble<T> actual = cabeza;
         int contador = 0;
         while (actual != null){
             if (actual.getDato().equals(elem)){
@@ -252,10 +247,9 @@ public class ListaEnlazada<T> implements TDALista<T> {
      * @return el primer elemento que cumple el criterio, o {@code null}
      *         si no existe ninguno
      */
-
     @Override
     public T buscar(Predicate<T> criterio){
-        Nodo<T> actual = cabeza;
+        NodoDoble<T> actual = cabeza;
         while (actual != null){
             if (criterio.test(actual.getDato())){
                 return actual.getDato();
@@ -268,48 +262,48 @@ public class ListaEnlazada<T> implements TDALista<T> {
     /**
      * Retorna una nueva lista con los elementos ordenados según el comparador dado.
      *
-     * <p>El criterio de orden está determinado por el objeto {@link Comparator}
-     * recibido como parámetro.</p>
-     *
      * @param comparator el comparador que define el orden de los elementos
      * @return una lista ordenada según el criterio indicado
      */
-
     @Override
     public TDALista<T> ordenar(Comparator<T> comparator){
-        ListaEnlazada<T> resultado = new ListaEnlazada<>();
-        Nodo<T> actual = cabeza;
-
+        ListaDobleEnlazada<T> resultado = new ListaDobleEnlazada<>();
+        NodoDoble<T> actual = cabeza;
         while (actual != null){
-            T dato = actual.getDato();
-
-            if (resultado.cabeza == null || comparator.compare(dato, resultado.cabeza.getDato()) < 0){
-                Nodo<T> nuevoNodo = new Nodo<>(dato);
-                nuevoNodo.siguiente = resultado.cabeza;
-                resultado.cabeza = nuevoNodo;
-                if (resultado.cola == null){
-                    resultado.cola = nuevoNodo;
-                }
-            }
-            else{
-                Nodo<T> actualResultado = resultado.cabeza;
-                while (actualResultado.siguiente != null &&
-                    comparator.compare(dato, actualResultado.siguiente.getDato()) >= 0){
-                    actualResultado = actualResultado.siguiente;
-                }
-                Nodo<T> nuevoNodo = new Nodo<>(dato);
-                nuevoNodo.siguiente = actualResultado.siguiente;
-                actualResultado.siguiente = nuevoNodo;
-                if (nuevoNodo.siguiente == null){
-                    resultado.cola = nuevoNodo;
-                }
-            }
-
+            resultado.agregarOrdenado(actual.getDato(), comparator);
             actual = actual.siguiente;
         }
-
-        resultado.tamanio = this.tamanio;
         return resultado;
+    }
+
+    private void agregarOrdenado(T dato, Comparator<T> comparator){
+        NodoDoble<T> nuevoNodo = new NodoDoble<>(dato);
+        if (cabeza == null || comparator.compare(dato, cabeza.getDato()) < 0){
+            nuevoNodo.siguiente = cabeza;
+            if (cabeza != null){
+                cabeza.anterior = nuevoNodo;
+            }
+            cabeza = nuevoNodo;
+            if (cola == null){
+                cola = nuevoNodo;
+            }
+        }
+        else{
+            NodoDoble<T> actual = cabeza;
+            while (actual.siguiente != null && comparator.compare(dato, actual.siguiente.getDato()) >= 0){
+                actual = actual.siguiente;
+            }
+            nuevoNodo.siguiente = actual.siguiente;
+            nuevoNodo.anterior = actual;
+            if (actual.siguiente != null){
+                actual.siguiente.anterior = nuevoNodo;
+            }
+            actual.siguiente = nuevoNodo;
+            if (nuevoNodo.siguiente == null){
+                cola = nuevoNodo;
+            }
+        }
+        tamanio++;
     }
 
     /**
@@ -317,7 +311,6 @@ public class ListaEnlazada<T> implements TDALista<T> {
      *
      * @return la cantidad de elementos de la lista
      */
-
     @Override
     public int tamaño(){
         return tamanio;
@@ -329,7 +322,6 @@ public class ListaEnlazada<T> implements TDALista<T> {
      * @return {@code true} si la lista está vacía;
      *         {@code false} en caso contrario
      */
-
     @Override
     public boolean esVacio(){
         return cabeza == null;
@@ -337,15 +329,11 @@ public class ListaEnlazada<T> implements TDALista<T> {
 
     /**
      * Elimina todos los elementos de la lista.
-     *
-     * <p>Luego de invocar este método, la lista queda vacía.</p>
      */
-
     @Override
     public void vaciar(){
         cabeza = null;
         cola = null;
         tamanio = 0;
     }
-
 }
