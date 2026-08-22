@@ -39,8 +39,12 @@ public class Paciente {
         return caracteristicas; 
     }
 
-    public void setCaracteristica(String caracteristicaNueva){
-        
+   public void agregarCaracteristica(String caracteristicaNueva) {
+        caracteristicas.agregar(caracteristicaNueva);
+    }
+
+    public boolean eliminarCaracteristica(String caracteristica) {
+        return caracteristicas.remover(caracteristica);
     }
 
    
@@ -48,4 +52,23 @@ public class Paciente {
 
   //  public long minutosEsperando(LocalDateTime momento) { }
   
+        @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(nombre).append(" (ID: ").append(id).append(") - ").append(urgencia);
+        sb.append(" - Caracteristicas: ");
+        if (caracteristicas.esVacio()) {
+            sb.append("ninguna");
+        } else {
+            for (int i = 0; i < caracteristicas.tamaño(); i++) {
+                if (i > 0) {
+                    sb.append(", ");
+                }
+                sb.append(caracteristicas.obtener(i));
+            }
+        }
+        return sb.toString();
+    }
+
+
 }

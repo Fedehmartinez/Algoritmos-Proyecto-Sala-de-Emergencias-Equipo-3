@@ -1,6 +1,7 @@
 package ucu.edu.aed.clases;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Consulta {
 
@@ -32,4 +33,13 @@ public class Consulta {
         return fecha; 
     }
 
+        
+    private static final DateTimeFormatter FORMATO_FECHA =
+       DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+    @Override
+    public String toString() {
+        return "[" + fecha.format(FORMATO_FECHA) + "] Paciente " + idPaciente
+                + " - " + urgencia + " - " + procedimiento;
+    }
 }

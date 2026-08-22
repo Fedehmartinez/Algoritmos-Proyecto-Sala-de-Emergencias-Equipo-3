@@ -19,7 +19,7 @@ public class SalaEmergencia {
         this.consultorios = new ListaArray<>();
     }
 
-    public Paciente registrarPaciente(String nombre, String id, String caracteristicas) {
+    public Paciente registrarPaciente(String nombre, String id) {
         return null; // Crea un paciente y lo agrega a la lista de pacientes registrados
     }
 
@@ -53,6 +53,15 @@ public class SalaEmergencia {
     
     public void darDeAlta(int numeroDelConsultorio) {
     // Lo saca de la ListaArray y lo ingresa en la pila de consultas 
+    }
+
+        @Override
+    public String toString() {
+        return "Sala de emergencias"
+                + " | Registrados: " + pacientesRegistrados.tamaño()
+                + " | En espera: " + esperaAtencion.tamaño()
+                + " | En consultorio: " + consultorios.tamaño()
+                + " | Consultas realizadas: " + historialConsultas.tamaño();
     }
 
 }
