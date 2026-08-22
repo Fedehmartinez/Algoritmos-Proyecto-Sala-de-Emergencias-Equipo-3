@@ -15,6 +15,20 @@ import ucu.edu.aed.tda.TDAConjunto;
  * @param <T> el tipo de los elementos almacenados en el conjunto
  */
 public class Conjunto<T> extends ListaEnlazada<T> implements TDAConjunto<T> {
+        @Override
+    public void agregar(T elem) {
+        if (!contiene(elem)) {
+            super.agregar(elem);
+        }
+    }
+    
+        @Override
+    public void agregar(int index, T elem) {
+        if (!contiene(elem)) {
+            super.agregar(index, elem);
+        }
+    }
+
     /**
      * Retorna un nuevo conjunto que representa la unión entre este conjunto
      * y el conjunto recibido como parámetro.
@@ -22,8 +36,19 @@ public class Conjunto<T> extends ListaEnlazada<T> implements TDAConjunto<T> {
      * @param otro el otro conjunto
      * @return un nuevo conjunto con todos los elementos de ambos conjuntos
      */
-    public TDAConjunto<T> union(TDAConjunto<T> otro){
-        return null;
+    @Override
+    public TDAConjunto<T> union(TDAConjunto<T> otro) {
+        Conjunto<T> resultado = new Conjunto<>();
+
+        for (int i = 0; i < this.tamanio; i++) {
+            resultado.agregar(this.obtener(i));
+        }
+
+        for (int i = 0; i < otro.tamaño(); i++) {
+            resultado.agregar(otro.obtener(i));
+        }
+
+        return resultado;
     }
 
     /**
@@ -33,10 +58,20 @@ public class Conjunto<T> extends ListaEnlazada<T> implements TDAConjunto<T> {
      * @param otro el otro conjunto
      * @return un nuevo conjunto con los elementos comunes a ambos conjuntos
      */
-    public TDAConjunto<T> interseccion(TDAConjunto<T> otro){
-         return null;
-    }
+    @Override
+    public TDAConjunto<T> interseccion(TDAConjunto<T> otro) {
+        Conjunto<T> resultado = new Conjunto<>();
 
+        for (int i = 0; i < this.tamanio; i++) {
+            T elemento = this.obtener(i);
+
+            if (otro.contiene(elemento)) {
+                resultado.agregar(elemento);
+            }
+        }
+
+        return resultado;
+    }
     /**
      * Retorna un nuevo conjunto que representa la diferencia entre este conjunto
      * y el conjunto recibido como parámetro.
@@ -47,10 +82,20 @@ public class Conjunto<T> extends ListaEnlazada<T> implements TDAConjunto<T> {
      * @param otro el otro conjunto
      * @return un nuevo conjunto con la diferencia entre ambos conjuntos
      */
-    public TDAConjunto<T> diferencia(TDAConjunto<T> otro){
-        return null;
-    }
+    @Override
+    public TDAConjunto<T> diferencia(TDAConjunto<T> otro) {
+        Conjunto<T> resultado = new Conjunto<>();
 
+        for (int i = 0; i < this.tamanio; i++) {
+            T elemento = this.obtener(i);
+
+            if (!otro.contiene(elemento)) {
+                resultado.agregar(elemento);
+            }
+        }
+
+        return resultado;
+    }
     /**
      * Determina si este conjunto es subconjunto del conjunto dado.
      *
@@ -58,7 +103,14 @@ public class Conjunto<T> extends ListaEnlazada<T> implements TDAConjunto<T> {
      * @return {@code true} si todos los elementos de este conjunto pertenecen también a {@code otro};
      * {@code false} en caso contrario
      */
-    public boolean esSubconjuntoDe(TDAConjunto<T> otro){
-         return true;
+    @Override
+    public boolean esSubconjuntoDe(TDAConjunto<T> otro) {
+        for (int i = 0; i < this.tamanio; i++) {
+            if (!otro.contiene(this.obtener(i))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

@@ -1,5 +1,7 @@
 package ucu.edu.aed.implementaciones;
 
+import java.util.NoSuchElementException;
+
 import ucu.edu.aed.tda.TDACola;
 
 /**
@@ -24,8 +26,14 @@ public class Cola<T> extends ListaEnlazada<T> implements TDACola<T> {
      * @return el elemento ubicado al frente de la cola
      * @throws java.util.NoSuchElementException si la cola está vacía
      */
+
+    @Override
     public T frente(){
-        return null;
+        if (esVacio()) {
+            throw new NoSuchElementException();
+        } else {
+            return obtener(0);
+        }
     };
 
     /**
@@ -35,7 +43,10 @@ public class Cola<T> extends ListaEnlazada<T> implements TDACola<T> {
      * @return {@code true} si el elemento fue agregado correctamente;
      *         {@code false} en caso contrario
      */
+
+    @Override
     public boolean poneEnCola(T dato){
+        agregar(dato);
         return true;
     }
 
@@ -48,7 +59,13 @@ public class Cola<T> extends ListaEnlazada<T> implements TDACola<T> {
      * @return el elemento removido del frente de la cola
      * @throws java.util.NoSuchElementException si la cola está vacía
      */
+
+    @Override
     public T quitaDeCola(){
-        return null;
+        if (esVacio()) {
+            throw new NoSuchElementException();
+        } else {
+            return remover(0);
+        }
     }
 }
