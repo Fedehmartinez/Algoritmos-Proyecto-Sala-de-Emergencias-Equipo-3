@@ -5,9 +5,6 @@ import java.util.function.Predicate;
 
 import ucu.edu.aed.tda.TDALista;
 
-/**
- * Implementación de TDALista&lt;T&gt; sobre un arreglo dinámico (redimensionable).
- */
 public class ListaArray<T> implements TDALista<T> {
 
     private static final int CAPACIDAD_INICIAL = 10;

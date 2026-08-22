@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="org.example.ListaEnlazadaTest" time="0.001" tests="30" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="org.example.ListaCircularDobleTest" time="0" tests="25" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="25"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -59,34 +59,29 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="69.0"/>
   </properties>
-  <testcase name="removerIndiceListaVacia" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="removerElementoListaVacia" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="agregarConIndiceFueraDeRango" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="obtenerEnListaVacia" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="ordenarConElementosRepetidosMantieneLaCantidad" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="agregarConIndiceEnListaVacia" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="agregarVariosElementosAlFinal" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="removerIndiceElementoExistente" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="obtenerIndiceFueraDeRango" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="removerCabezaDejaSiguienteEnNull" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="listaRecienCreadaEsVacia" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="removerIndiceFueraDeRango" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="removerIndiceUltimoElementoActualizaCola" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="buscarSinCoincidenciasDevuelveNull" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="removerElementoInexistente" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="removerIndiceUnicoElemento" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="agregarConIndiceEnElMedio" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="agregarConIndiceAlFinalEquivaleAAgregar" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="ordenarListaVaciaDevuelveListaVacia" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="removerElementoExistente" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="agregarLuegoDeVaciarVuelveAFuncionar" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="removerElementoQueEsLaCola" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="agregarConIndiceAlPrincipio" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="vaciarDejaLaListaSinElementos" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="ordenarDevuelveNuevaListaOrdenadaSinModificarLaOriginal" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="contieneEnListaVaciaEsFalse" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="indiceDeElementoExistenteEInexistente" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="contieneElementoExistenteEInexistente" classname="org.example.ListaEnlazadaTest" time="0"/>
-  <testcase name="buscarPorCriterio" classname="org.example.ListaEnlazadaTest" time="0.001"/>
-  <testcase name="agregarUnElemento" classname="org.example.ListaEnlazadaTest" time="0"/>
+  <testcase name="removerIndiceListaVacia" classname="org.example.ListaCircularDobleTest" time="0"/>
+  <testcase name="removerElementoListaVacia" classname="org.example.ListaCircularDobleTest" time="0"/>
+  <testcase name="agregarConIndiceFueraDeRango" classname="org.example.ListaCircularDobleTest" time="0"/>
+  <testcase name="obtenerEnListaVacia" classname="org.example.ListaCircularDobleTest" time="0"/>
+  <testcase name="agregarVariosElementosAlFinal" classname="org.example.ListaCircularDobleTest" time="0"/>
+  <testcase name="removerIndiceElementoExistente" classname="org.example.ListaCircularDobleTest" time="0"/>
+  <testcase name="obtenerIndiceFueraDeRango" classname="org.example.ListaCircularDobleTest" time="0"/>
+  <testcase name="listaRecienCreadaEsVacia" classname="org.example.ListaCircularDobleTest" time="0"/>
+  <testcase name="removerIndiceFueraDeRango" classname="org.example.ListaCircularDobleTest" time="0"/>
+  <testcase name="buscarSinCoincidenciasDevuelveNull" classname="org.example.ListaCircularDobleTest" time="0"/>
+  <testcase name="removerElementoInexistente" classname="org.example.ListaCircularDobleTest" time="0"/>
+  <testcase name="agregarConIndiceEnElMedio" classname="org.example.ListaCircularDobleTest" time="0"/>
+  <testcase name="removerUnicoElementoDejaLaListaVacia" classname="org.example.ListaCircularDobleTest" time="0"/>
+  <testcase name="removerElementoExistente" classname="org.example.ListaCircularDobleTest" time="0"/>
+  <testcase name="agregarLuegoDeVaciarVuelveAFuncionar" classname="org.example.ListaCircularDobleTest" time="0"/>
+  <testcase name="removerPrimeroYUltimoActualizaCabezaYCola" classname="org.example.ListaCircularDobleTest" time="0"/>
+  <testcase name="obtenerRecorreDesdeElExtremoMasCercano" classname="org.example.ListaCircularDobleTest" time="0"/>
+  <testcase name="agregarConIndiceAlPrincipio" classname="org.example.ListaCircularDobleTest" time="0"/>
+  <testcase name="vaciarDejaLaListaSinElementos" classname="org.example.ListaCircularDobleTest" time="0"/>
+  <testcase name="ordenarDevuelveNuevaListaOrdenadaSinModificarLaOriginal" classname="org.example.ListaCircularDobleTest" time="0"/>
+  <testcase name="laColaApuntaOtraVezALaCabezaYViceversa" classname="org.example.ListaCircularDobleTest" time="0"/>
+  <testcase name="indiceDeElementoExistenteEInexistente" classname="org.example.ListaCircularDobleTest" time="0"/>
+  <testcase name="contieneElementoExistenteEInexistente" classname="org.example.ListaCircularDobleTest" time="0"/>
+  <testcase name="buscarPorCriterio" classname="org.example.ListaCircularDobleTest" time="0"/>
+  <testcase name="agregarUnElemento" classname="org.example.ListaCircularDobleTest" time="0"/>
 </testsuite>

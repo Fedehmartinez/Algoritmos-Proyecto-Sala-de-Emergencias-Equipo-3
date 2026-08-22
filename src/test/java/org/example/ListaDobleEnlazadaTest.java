@@ -7,14 +7,14 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import ucu.edu.aed.implementaciones.ListaEnlazada;
+import ucu.edu.aed.implementaciones.ListaDobleEnlazada;
 import ucu.edu.aed.tda.TDALista;
 
-public class ListaEnlazadaTest {
+public class ListaDobleEnlazadaTest {
 
     @Test
     public void listaRecienCreadaEsVacia(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
 
         assertTrue(lista.esVacio());
         assertEquals(0, lista.tamaño());
@@ -22,7 +22,7 @@ public class ListaEnlazadaTest {
 
     @Test
     public void agregarUnElemento(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
 
         lista.agregar(10);
 
@@ -33,7 +33,7 @@ public class ListaEnlazadaTest {
 
     @Test
     public void agregarVariosElementosAlFinal(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
 
         lista.agregar(10);
         lista.agregar(20);
@@ -47,7 +47,7 @@ public class ListaEnlazadaTest {
 
     @Test
     public void agregarConIndiceAlPrincipio(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
         lista.agregar(20);
         lista.agregar(30);
 
@@ -61,7 +61,7 @@ public class ListaEnlazadaTest {
 
     @Test
     public void agregarConIndiceEnElMedio(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
         lista.agregar(10);
         lista.agregar(30);
 
@@ -73,7 +73,7 @@ public class ListaEnlazadaTest {
 
     @Test
     public void agregarConIndiceAlFinalEquivaleAAgregar(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
         lista.agregar(10);
 
         lista.agregar(1, 20);
@@ -82,19 +82,9 @@ public class ListaEnlazadaTest {
         assertEquals(2, lista.tamaño());
     }
 
-    @Test
-    public void agregarConIndiceEnListaVacia(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
-
-        lista.agregar(0, 10);
-
-        assertEquals(1, lista.tamaño());
-        assertEquals(Integer.valueOf(10), lista.obtener(0));
-    }
-
     @Test(expected = IndexOutOfBoundsException.class)
     public void agregarConIndiceFueraDeRango(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
         lista.agregar(10);
 
         lista.agregar(5, 20);
@@ -102,7 +92,7 @@ public class ListaEnlazadaTest {
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void obtenerIndiceFueraDeRango(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
         lista.agregar(10);
 
         lista.obtener(5);
@@ -110,14 +100,26 @@ public class ListaEnlazadaTest {
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void obtenerEnListaVacia(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
 
         lista.obtener(0);
     }
 
     @Test
+    public void obtenerRecorreDesdeElExtremoMasCercano(){
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
+        for (int i = 0; i < 10; i++){
+            lista.agregar(i);
+        }
+
+        assertEquals(Integer.valueOf(0), lista.obtener(0));
+        assertEquals(Integer.valueOf(9), lista.obtener(9));
+        assertEquals(Integer.valueOf(7), lista.obtener(7));
+    }
+
+    @Test
     public void removerIndiceElementoExistente(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
         lista.agregar(10);
         lista.agregar(20);
         lista.agregar(30);
@@ -131,7 +133,7 @@ public class ListaEnlazadaTest {
 
     @Test
     public void removerIndiceUnicoElemento(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
         lista.agregar(10);
 
         Integer removido = lista.remover(0);
@@ -141,21 +143,22 @@ public class ListaEnlazadaTest {
     }
 
     @Test
-    public void removerIndiceUltimoElementoActualizaCola(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+    public void removerPrimeroYUltimoActualizaCabezaYCola(){
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
         lista.agregar(10);
         lista.agregar(20);
-
-        lista.remover(1);
         lista.agregar(30);
 
-        assertEquals(Integer.valueOf(30), lista.obtener(1));
-        assertEquals(2, lista.tamaño());
+        lista.remover(0);
+        lista.remover(lista.tamaño() - 1);
+
+        assertEquals(1, lista.tamaño());
+        assertEquals(Integer.valueOf(20), lista.obtener(0));
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void removerIndiceFueraDeRango(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
         lista.agregar(10);
 
         lista.remover(5);
@@ -163,14 +166,14 @@ public class ListaEnlazadaTest {
 
     @Test(expected = IndexOutOfBoundsException.class)
     public void removerIndiceListaVacia(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
 
         lista.remover(0);
     }
 
     @Test
     public void removerElementoExistente(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
         lista.agregar(10);
         lista.agregar(20);
         lista.agregar(30);
@@ -183,33 +186,19 @@ public class ListaEnlazadaTest {
     }
 
     @Test
-    public void removerElementoQueEsLaCola(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
-        lista.agregar(10);
-        lista.agregar(20);
-
-        boolean resultado = lista.remover(Integer.valueOf(20));
-        lista.agregar(30);
-
-        assertTrue(resultado);
-        assertEquals(Integer.valueOf(30), lista.obtener(1));
-    }
-
-    @Test
     public void removerElementoInexistente(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
         lista.agregar(10);
-        lista.agregar(20);
 
         boolean resultado = lista.remover(Integer.valueOf(99));
 
         assertFalse(resultado);
-        assertEquals(2, lista.tamaño());
+        assertEquals(1, lista.tamaño());
     }
 
     @Test
     public void removerElementoListaVacia(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
 
         boolean resultado = lista.remover(Integer.valueOf(10));
 
@@ -218,20 +207,8 @@ public class ListaEnlazadaTest {
     }
 
     @Test
-    public void removerCabezaDejaSiguienteEnNull(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
-        lista.agregar(10);
-        lista.agregar(20);
-
-        Integer removido = lista.remover(0);
-
-        assertEquals(Integer.valueOf(10), removido);
-        assertEquals(1, lista.tamaño());
-    }
-
-    @Test
     public void contieneElementoExistenteEInexistente(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
         lista.agregar(10);
         lista.agregar(20);
 
@@ -240,15 +217,8 @@ public class ListaEnlazadaTest {
     }
 
     @Test
-    public void contieneEnListaVaciaEsFalse(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
-
-        assertFalse(lista.contiene(10));
-    }
-
-    @Test
     public void indiceDeElementoExistenteEInexistente(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
         lista.agregar(10);
         lista.agregar(20);
         lista.agregar(30);
@@ -259,7 +229,7 @@ public class ListaEnlazadaTest {
 
     @Test
     public void buscarPorCriterio(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
         lista.agregar(10);
         lista.agregar(15);
         lista.agregar(20);
@@ -271,18 +241,15 @@ public class ListaEnlazadaTest {
 
     @Test
     public void buscarSinCoincidenciasDevuelveNull(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
         lista.agregar(10);
-        lista.agregar(20);
 
-        Integer encontrado = lista.buscar(n -> n > 100);
-
-        assertNull(encontrado);
+        assertNull(lista.buscar(n -> n > 100));
     }
 
     @Test
     public void ordenarDevuelveNuevaListaOrdenadaSinModificarLaOriginal(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
         lista.agregar(30);
         lista.agregar(10);
         lista.agregar(20);
@@ -296,32 +263,8 @@ public class ListaEnlazadaTest {
     }
 
     @Test
-    public void ordenarListaVaciaDevuelveListaVacia(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
-
-        TDALista<Integer> ordenada = lista.ordenar((a, b) -> a - b);
-
-        assertTrue(ordenada.esVacio());
-    }
-
-    @Test
-    public void ordenarConElementosRepetidosMantieneLaCantidad(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
-        lista.agregar(20);
-        lista.agregar(10);
-        lista.agregar(20);
-
-        TDALista<Integer> ordenada = lista.ordenar((a, b) -> a - b);
-
-        assertEquals(3, ordenada.tamaño());
-        assertEquals(Integer.valueOf(10), ordenada.obtener(0));
-        assertEquals(Integer.valueOf(20), ordenada.obtener(1));
-        assertEquals(Integer.valueOf(20), ordenada.obtener(2));
-    }
-
-    @Test
     public void vaciarDejaLaListaSinElementos(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
         lista.agregar(10);
         lista.agregar(20);
 
@@ -333,7 +276,7 @@ public class ListaEnlazadaTest {
 
     @Test
     public void agregarLuegoDeVaciarVuelveAFuncionar(){
-        ListaEnlazada<Integer> lista = new ListaEnlazada<>();
+        ListaDobleEnlazada<Integer> lista = new ListaDobleEnlazada<>();
         lista.agregar(10);
         lista.vaciar();
 

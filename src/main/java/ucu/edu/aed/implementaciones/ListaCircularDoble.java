@@ -5,28 +5,12 @@ import java.util.function.Predicate;
 
 import ucu.edu.aed.tda.TDALista;
 
-/**
- * Implementación de TDALista&lt;T&gt; mediante una lista doblemente enlazada circular.
- *
- * <p>{@code cola.siguiente == cabeza} y {@code cabeza.anterior == cola}, en lugar
- * de {@code null} en los extremos.</p>
- */
 public class ListaCircularDoble<T> implements TDALista<T> {
 
     protected NodoDoble<T> cabeza;
     protected NodoDoble<T> cola;
     protected int tamanio;
 
-    /**
-     * Busca el nodo ubicado en la posición indicada, recorriendo desde
-     * el extremo más cercano (cabeza o cola) según convenga.
-     *
-     * <p>Costo O(n) en el peor caso, pero como máximo tamanio/2 pasos,
-     * a diferencia de recorrer siempre desde la cabeza.</p>
-     *
-     * @param index la posición del nodo a recuperar (ya validada por el llamador)
-     * @return el nodo ubicado en esa posición
-     */
     private NodoDoble<T> obtenerNodo(int index){
         if (index < tamanio / 2){
             NodoDoble<T> actual = cabeza;
@@ -63,14 +47,6 @@ public class ListaCircularDoble<T> implements TDALista<T> {
         tamanio++;
     }
 
-    /**
-     * Agrega un elemento en la posición indicada.
-     *
-     * <p>A diferencia de una implementación basada en "detenerse un paso antes",
-     * esta versión ubica directamente el nodo que hoy ocupa {@code index}
-     * (vía {@link #obtenerNodo}) y lo enlaza usando su propio puntero
-     * {@code anterior}, sin necesidad de recorrer desde el principio.</p>
-     */
     @Override
     public void agregar(int index, T elem){
         if (index < 0 || index > tamanio){
@@ -135,13 +111,6 @@ public class ListaCircularDoble<T> implements TDALista<T> {
         return nodoRemovido.getDato();
     }
 
-    /**
-     * Remueve la primera ocurrencia del elemento indicado en la lista.
-     *
-     * <p>Recorrido único: encuentra y desconecta el nodo en el mismo
-     * pasaje, sin volver a recorrer la lista como en una implementación
-     * que primero llama a {@code indiceDe} y luego a {@code remover(index)}.</p>
-     */
     @Override
     public boolean remover(T elem){
         if (cabeza == null){

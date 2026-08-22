@@ -5,12 +5,6 @@ import java.util.function.Predicate;
 
 import ucu.edu.aed.tda.TDALista;
 
-/**
- * Implementación de TDALista&lt;T&gt; mediante una lista simplemente enlazada circular.
- *
- * <p>El último nodo apunta nuevamente al primero ({@code cola.siguiente == cabeza}),
- * en lugar de apuntar a {@code null} como en la lista lineal.</p>
- */
 public class ListaCircular<T> implements TDALista<T> {
 
     protected Nodo<T> cabeza;
@@ -115,14 +109,6 @@ public class ListaCircular<T> implements TDALista<T> {
         return nodoRemovido.getDato();
     }
 
-    /**
-     * Remueve la primera ocurrencia del elemento indicado.
-     *
-     * <p>Recorrido único: se lleva un puntero al nodo anterior mientras
-     * se busca, de forma que al encontrar el elemento ya se puede
-     * reconectar sin necesidad de un segundo recorrido (a diferencia de
-     * llamar primero a {@code indiceDe} y luego a {@code remover(index)}).</p>
-     */
     @Override
     public boolean remover(T elem){
         if (cabeza == null){
