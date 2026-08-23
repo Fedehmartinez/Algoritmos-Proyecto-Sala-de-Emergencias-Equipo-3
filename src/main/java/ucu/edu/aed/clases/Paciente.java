@@ -9,13 +9,15 @@ public class Paciente {
     private final String nombre;
     private final ListaEnlazada<String> caracteristicas;
     private NivelUrgencia urgencia;
+    private EstadoPaciente estado;
  // private final LocalDateTime horaLlegada;
 
-    public Paciente(String id, String nombre, NivelUrgencia urgencia) {
+    public Paciente(String id, String nombre) {
         this.id = id;
         this.nombre = nombre;
         this.caracteristicas = new ListaEnlazada<>();
-        this.urgencia = urgencia;
+        this.urgencia = null; // Se asigna la urgencia más adelante, cuando se agregue a la cola de prioridad
+        this.estado = EstadoPaciente.REGISTRADO;
 //      this.horaLlegada = LocalDateTime.now();
     }
 
@@ -35,6 +37,13 @@ public class Paciente {
         this.urgencia = urgencia; 
     }
 
+    public EstadoPaciente getEstadoPaciente(){
+        return estado;
+    }
+
+    public void setEstadoPaciente(EstadoPaciente estado){
+        this.estado = estado; 
+    }
     public ListaEnlazada<String> getCaracteristicas() { 
         return caracteristicas; 
     }
@@ -46,6 +55,7 @@ public class Paciente {
     public boolean eliminarCaracteristica(String caracteristica) {
         return caracteristicas.remover(caracteristica);
     }
+    
 
    
   //  public LocalDateTime getHoraLlegada() { return horaLlegada; }
