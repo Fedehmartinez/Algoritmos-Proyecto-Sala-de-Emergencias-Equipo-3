@@ -9,7 +9,6 @@ public class Paciente {
     private final ListaEnlazada<String> caracteristicas;
     private NivelUrgencia urgencia;
     private EstadoPaciente estado;
- // private final LocalDateTime horaLlegada;
 
     public Paciente(String id, String nombre) {
         this.id = id;
@@ -17,7 +16,7 @@ public class Paciente {
         this.caracteristicas = new ListaEnlazada<>();
         this.urgencia = null; // Se asigna la urgencia más adelante, cuando se agregue a la cola de prioridad
         this.estado = EstadoPaciente.REGISTRADO;
-//      this.horaLlegada = LocalDateTime.now();
+
     }
 
     public String getId() { 
@@ -55,11 +54,6 @@ public class Paciente {
         return caracteristicas.remover(caracteristica);
     }
     
-
-   
-  //  public LocalDateTime getHoraLlegada() { return horaLlegada; }
-
-  //  public long minutosEsperando(LocalDateTime momento) { }
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
