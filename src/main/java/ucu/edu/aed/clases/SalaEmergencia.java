@@ -30,14 +30,23 @@ public class SalaEmergencia {
         return null; // Crea un paciente y lo agrega a la lista de pacientes registrados
     }
 
-    public void agregarPaciente(Paciente pacienteNuevo, NivelUrgencia urgencia) {
-    // Lo mete en cola
-    if (urgencia == null){
+public void agregarPacienteACola(Paciente pacienteNuevo, NivelUrgencia urgencia) {
+    if (pacienteNuevo == null) {
+        throw new IllegalArgumentException("Debe haber un paciente");
+    }
+    if (urgencia == null) {
         throw new IllegalArgumentException("Debe haber un nivel de urgencia");
     }
-    pacienteNuevo.setUrgencia(urgencia);
-    pacienteNuevo.setEstadoPaciente(EstadoPaciente.EN_ESPERA);
-    esperaAtencion.agregar(pacienteNuevo);
+
+    Paciente registrado = buscarPaciente(pacienteNuevo.getId());
+    if (registrado == null) {
+        throw new IllegalArgumentException(
+                "El paciente " + pacienteNuevo.getId() + " no esta registrado");
+    }
+
+    registrado.setUrgencia(urgencia);
+    registrado.setEstadoPaciente(EstadoPaciente.EN_ESPERA);
+    esperaAtencion.agregar(registrado);
     }
 
     public void listarPacientes() {
@@ -59,6 +68,9 @@ public class SalaEmergencia {
     }
 
     public Paciente buscarPaciente(String idPaciente) {
+    if (idPaciente == null) {
+        throw new IllegalArgumentException("Debe haber un paciente");
+    }    
     return pacientesRegistrados.buscar(new Predicate<Paciente>() {
             @Override
             public boolean test(Paciente p) {

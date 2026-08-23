@@ -69,6 +69,6 @@ public class Paciente {
         sb.append(" - Caracteristicas: ");
         sb.append(caracteristicas.esVacio() ? "ninguna" : caracteristicas.toString());
     return sb.toString();
-}
+    }
 
 }
