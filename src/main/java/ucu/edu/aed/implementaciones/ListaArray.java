@@ -143,6 +143,17 @@ public class ListaArray<T> implements TDALista<T> {
         tamanio = 0;
     }
 
+    public void ampliarCapacidad(int cantidadAdicional){
+        if (cantidadAdicional <= 0){
+            throw new IllegalArgumentException("La cantidad a ampliar debe ser mayor a 0");
+        }
+        Object[] nuevo = new Object[datos.length + cantidadAdicional];
+        for (int i = 0; i < tamanio; i++){
+            nuevo[i] = datos[i];
+        }
+        datos = nuevo;
+    }
+
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();

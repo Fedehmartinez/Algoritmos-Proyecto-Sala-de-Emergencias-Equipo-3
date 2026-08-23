@@ -1,6 +1,7 @@
 package ucu.edu.aed.clases;
 
 import java.util.Comparator;
+import java.util.NoSuchElementException;
 import java.util.function.Predicate;
 
 import ucu.edu.aed.implementaciones.ColaPrioridad;
@@ -18,12 +19,13 @@ public class SalaEmergencia {
     private final ColaPrioridad<Paciente> esperaAtencion;
     private final Pila<Consulta> historialConsultas;
     private final ListaArray<Paciente> consultorios;
+    private int capacidadConsultorios = 5;
 
     public SalaEmergencia() {
         this.pacientesRegistrados = new ListaEnlazada<>();
         this.esperaAtencion = new ColaPrioridad<>(POR_URGENCIA);
         this.historialConsultas = new Pila<>();
-        this.consultorios = new ListaArray<>();
+        this.consultorios = new ListaArray<>(capacidadConsultorios);
     }
 
     public Paciente registrarPaciente(String nombre, String id) {
@@ -80,18 +82,37 @@ public void agregarPacienteACola(Paciente pacienteNuevo, NivelUrgencia urgencia)
     }
 
     public void eliminarPaciente(String idPaciente) {
-
+        Paciente paciente = buscarPaciente(idPaciente);
+        if (paciente == null) {
+            throw new NoSuchElementException("Paciente no encontrado: " + idPaciente);
+        }
+        pacientesRegistrados.remover(paciente);
     }
 
     public void mostrarPacientesEnConsultorios() {
-
+        if (consultorios.esVacio()) {
+            System.out.println("No hay pacientes en consultorios");
+            return;
+        }
+        System.out.println("Pacientes en consultorios:");
+        System.out.println(consultorios);
     }
 
     public void ingresarPaciente(Paciente paciente) {
-
+        if (consultorios.tamaño() >= capacidadConsultorios) {
+            throw new IllegalStateException("No hay consultorios libres");
+        }
+        esperaAtencion.remover(paciente);
+        consultorios.agregar(paciente);
+        paciente.setEstadoPaciente(EstadoPaciente.EN_CONSULTORIO);
     }
-    
-    
+
+    public void agregarConsultorio() {
+        capacidadConsultorios++;
+        consultorios.ampliarCapacidad(1);
+    }
+
+
     public void darDeAlta(int numeroDelConsultorio) {
     // Lo saca de la ListaArray y lo ingresa en la pila de consultas
     // no se refiere a dar de alta en el sistema, si no a dar de alta de la consulta/sanatorio/quirofano/lo que sea
