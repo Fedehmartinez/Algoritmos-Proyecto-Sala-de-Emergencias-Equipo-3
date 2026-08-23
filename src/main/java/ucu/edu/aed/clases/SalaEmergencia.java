@@ -40,17 +40,13 @@ public class SalaEmergencia {
     esperaAtencion.agregar(pacienteNuevo);
     }
 
-
-    /* 
-
-    Todavía no podemos listar pacientes ni consultas, el obtener de ListaEnlazada es por ID, así que puede hacerse un for para leer todo
-    pero cuando se lo dije a claude me dijo que eso es de orden O(n²) y que lo mejor es tocar tocar el toString de listaEnlazada
-    para que haga un solo recorrido y pase a O(n), también me dijo que algo mejor aún sería utilizar algo estilo Iterable, es una biblioteca
-    que nos ayuda con esto, pero como no tengo idea lo dejo por acá y me voy a dormir 😁
-
-    */
-      public ListaEnlazada<Paciente> listarPacientes() {
-        return pacientesRegistrados;
+    public void listarPacientes() {
+    if (pacientesRegistrados.esVacio()) {
+        System.out.println("No hay pacientes registrados");
+        return;
+    }
+        System.out.println("Pacientes registrados:");
+        System.out.println(pacientesRegistrados);
     }
 
     public void listarConsultas() {
@@ -58,11 +54,10 @@ public class SalaEmergencia {
         System.out.println("No hay consultas registradas");
         return;
     }
-    System.out.println("Historial de consultas:");
-    System.out.println(historialConsultas);
-}
+        System.out.println("Historial de consultas:");
+        System.out.println(historialConsultas);
+    }
 
-    // fede revisa esto porque esto si es IA full
     public Paciente buscarPaciente(String idPaciente) {
     return pacientesRegistrados.buscar(new Predicate<Paciente>() {
             @Override
