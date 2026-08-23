@@ -1,20 +1,26 @@
 package ucu.edu.aed.clases;
 
-import ucu.edu.aed.implementaciones.Cola;
+import java.util.Comparator;
+
+import ucu.edu.aed.implementaciones.ColaPrioridad;
 import ucu.edu.aed.implementaciones.ListaArray;
 import ucu.edu.aed.implementaciones.ListaEnlazada;
 import ucu.edu.aed.implementaciones.Pila;
 
 public class SalaEmergencia {
 
+       /** Ordena por tiempo máximo de espera tolerable: menos tiempo, más prioridad. */
+    public static final Comparator<Paciente> POR_URGENCIA =
+            Comparator.comparingInt(p -> p.getUrgencia().getTiempoMaximoEsperaMinutos());
+
     private final ListaEnlazada<Paciente> pacientesRegistrados;
-    private final Cola<Paciente> esperaAtencion;
+    private final ColaPrioridad<Paciente> esperaAtencion;
     private final Pila<Consulta> historialConsultas;
     private final ListaArray<Paciente> consultorios;
 
     public SalaEmergencia() {
         this.pacientesRegistrados = new ListaEnlazada<>();
-        this.esperaAtencion = new Cola<>();
+        this.esperaAtencion = new ColaPrioridad<>(POR_URGENCIA);
         this.historialConsultas = new Pila<>();
         this.consultorios = new ListaArray<>();
     }
