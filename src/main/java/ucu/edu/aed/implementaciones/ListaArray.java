@@ -32,6 +32,10 @@ public class ListaArray<T> implements TDALista<T> {
         }
     }
 
+    public int capacidad(){
+    return datos.length;
+}
+
     @Override
     public void agregar(T elem){
         asegurarCapacidad();

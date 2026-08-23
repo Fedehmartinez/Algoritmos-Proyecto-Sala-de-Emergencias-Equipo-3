@@ -90,6 +90,8 @@ public class SalaEmergencia {
         if (paciente == null) {
             throw new NoSuchElementException("Paciente no encontrado: " + idPaciente);
         }
+        esperaAtencion.remover(paciente);
+        consultorios.remover(paciente);
         pacientesRegistrados.remover(paciente);
     }
 
@@ -104,7 +106,7 @@ public class SalaEmergencia {
         if (paciente == null) {
             throw new IllegalArgumentException("Debe haber un paciente");
         }
-        if (consultorios.tamaño() >= capacidadConsultorios) {
+        if (consultorios.tamaño() >= consultorios.capacidad()) {
             throw new IllegalStateException("No hay consultorios libres");
         }
         esperaAtencion.remover(paciente);
@@ -113,7 +115,6 @@ public class SalaEmergencia {
     }
 
     public void agregarConsultorio() {
-        capacidadConsultorios++;
         consultorios.ampliarCapacidad(1);
     }
 

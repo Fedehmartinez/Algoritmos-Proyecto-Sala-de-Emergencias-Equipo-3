@@ -70,4 +70,17 @@ public class Paciente {
     return sb.toString();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Paciente)) return false;
+        Paciente otro = (Paciente) obj;
+        return id.equals(otro.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
 }
