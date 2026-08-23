@@ -29,10 +29,18 @@ public class SalaEmergencia {
     }
 
     public Paciente registrarPaciente(String nombre, String id) {
-        return null; // Crea un paciente y lo agrega a la lista de pacientes registrados
+        if (nombre == null || id == null) {
+            throw new IllegalArgumentException("Debe haber nombre e id");
+        }
+        if (buscarPaciente(id) != null) {
+            throw new IllegalArgumentException("Ya existe un paciente registrado con id " + id);
+        }
+        Paciente paciente = new Paciente(id, nombre);
+        pacientesRegistrados.agregar(paciente);
+        return paciente;
     }
 
-public void agregarPacienteACola(Paciente pacienteNuevo, NivelUrgencia urgencia) {
+    public void agregarPacienteACola(Paciente pacienteNuevo, NivelUrgencia urgencia) {
     if (pacienteNuevo == null) {
         throw new IllegalArgumentException("Debe haber un paciente");
     }
@@ -51,22 +59,18 @@ public void agregarPacienteACola(Paciente pacienteNuevo, NivelUrgencia urgencia)
     esperaAtencion.agregar(registrado);
     }
 
-    public void listarPacientes() {
+    public String listarPacientes() {
     if (pacientesRegistrados.esVacio()) {
-        System.out.println("No hay pacientes registrados");
-        return;
+        return "No hay pacientes registrados";
     }
-        System.out.println("Pacientes registrados:");
-        System.out.println(pacientesRegistrados);
+        return "Pacientes registrados:\n" + pacientesRegistrados;
     }
 
-    public void listarConsultas() {
+    public String listarConsultas() {
     if (historialConsultas.esVacio()) {
-        System.out.println("No hay consultas registradas");
-        return;
+        return "No hay consultas registradas";
     }
-        System.out.println("Historial de consultas:");
-        System.out.println(historialConsultas);
+        return "Historial de consultas:\n" + historialConsultas;
     }
 
     public Paciente buscarPaciente(String idPaciente) {
@@ -89,13 +93,11 @@ public void agregarPacienteACola(Paciente pacienteNuevo, NivelUrgencia urgencia)
         pacientesRegistrados.remover(paciente);
     }
 
-    public void mostrarPacientesEnConsultorios() {
+    public String mostrarPacientesEnConsultorios() {
         if (consultorios.esVacio()) {
-            System.out.println("No hay pacientes en consultorios");
-            return;
+            return "No hay pacientes en consultorios";
         }
-        System.out.println("Pacientes en consultorios:");
-        System.out.println(consultorios);
+        return "Pacientes en consultorios:\n" + consultorios;
     }
 
     public void ingresarPaciente(Paciente paciente) {
@@ -114,8 +116,11 @@ public void agregarPacienteACola(Paciente pacienteNuevo, NivelUrgencia urgencia)
 
 
     public void darDeAlta(int numeroDelConsultorio) {
-    // Lo saca de la ListaArray y lo ingresa en la pila de consultas
-    // no se refiere a dar de alta en el sistema, si no a dar de alta de la consulta/sanatorio/quirofano/lo que sea
+        // Lo saca de la ListaArray de consultorios y crea una consulta que se ingresa en la pila de consultas
+        Paciente paciente = consultorios.remover(numeroDelConsultorio);
+        Consulta consulta = new Consulta(paciente.getId(), paciente.getUrgencia(), "Consulta general");
+        historialConsultas.mete(consulta);
+        paciente.setEstadoPaciente(EstadoPaciente.ATENDIDO);
     }
 
         @Override
