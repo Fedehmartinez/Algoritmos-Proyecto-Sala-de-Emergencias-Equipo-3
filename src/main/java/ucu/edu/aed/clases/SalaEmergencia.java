@@ -19,13 +19,12 @@ public class SalaEmergencia {
     private final ColaPrioridad<Paciente> esperaAtencion;
     private final Pila<Consulta> historialConsultas;
     private final ListaArray<Paciente> consultorios;
-    private int capacidadConsultorios = 5;
 
     public SalaEmergencia() {
         this.pacientesRegistrados = new ListaEnlazada<>();
         this.esperaAtencion = new ColaPrioridad<>(POR_URGENCIA);
         this.historialConsultas = new Pila<>();
-        this.consultorios = new ListaArray<>(capacidadConsultorios);
+        this.consultorios = new ListaArray<>(5);
     }
 
     public Paciente registrarPaciente(String nombre, String id) {
