@@ -1,6 +1,5 @@
 package ucu.edu.aed.clases;
 
-import java.time.LocalDateTime;
 import ucu.edu.aed.implementaciones.ListaEnlazada;
 
 public class Paciente {
