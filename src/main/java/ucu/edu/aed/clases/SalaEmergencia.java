@@ -101,6 +101,9 @@ public class SalaEmergencia {
     }
 
     public void ingresarPaciente(Paciente paciente) {
+        if (paciente == null) {
+            throw new IllegalArgumentException("Debe haber un paciente");
+        }
         if (consultorios.tamaño() >= capacidadConsultorios) {
             throw new IllegalStateException("No hay consultorios libres");
         }
@@ -115,10 +118,12 @@ public class SalaEmergencia {
     }
 
 
-    public void darDeAlta(int numeroDelConsultorio) {
-        // Lo saca de la ListaArray de consultorios y crea una consulta que se ingresa en la pila de consultas
+    public void darDeAlta(int numeroDelConsultorio, String procedimiento) {
+        if (procedimiento == null) {
+            throw new IllegalArgumentException("Debe haber un procedimiento");
+        }
         Paciente paciente = consultorios.remover(numeroDelConsultorio);
-        Consulta consulta = new Consulta(paciente.getId(), paciente.getUrgencia(), "Consulta general");
+        Consulta consulta = new Consulta(paciente.getId(), paciente.getUrgencia(), procedimiento);
         historialConsultas.mete(consulta);
         paciente.setEstadoPaciente(EstadoPaciente.ATENDIDO);
     }
