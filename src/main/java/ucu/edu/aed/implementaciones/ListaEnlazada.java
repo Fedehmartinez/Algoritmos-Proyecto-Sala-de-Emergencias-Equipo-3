@@ -223,4 +223,18 @@ public class ListaEnlazada<T> implements TDALista<T> {
         tamanio = 0;
     }
 
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        Nodo<T> actual = cabeza;
+        while (actual != null){
+            sb.append(actual.getDato());
+            if (actual.siguiente != null){
+                sb.append(", ");
+            }
+            actual = actual.siguiente;
+        }
+        return sb.toString();
+    }
+
 }

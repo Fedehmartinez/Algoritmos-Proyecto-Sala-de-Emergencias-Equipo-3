@@ -1,6 +1,5 @@
 package ucu.edu.aed.clases;
 
-import java.time.LocalDateTime;
 import ucu.edu.aed.implementaciones.ListaEnlazada;
 
 public class Paciente {
@@ -9,13 +8,15 @@ public class Paciente {
     private final String nombre;
     private final ListaEnlazada<String> caracteristicas;
     private NivelUrgencia urgencia;
+    private EstadoPaciente estado;
  // private final LocalDateTime horaLlegada;
 
-    public Paciente(String id, String nombre, NivelUrgencia urgencia) {
+    public Paciente(String id, String nombre) {
         this.id = id;
         this.nombre = nombre;
         this.caracteristicas = new ListaEnlazada<>();
-        this.urgencia = urgencia;
+        this.urgencia = null; // Se asigna la urgencia más adelante, cuando se agregue a la cola de prioridad
+        this.estado = EstadoPaciente.REGISTRADO;
 //      this.horaLlegada = LocalDateTime.now();
     }
 
@@ -35,6 +36,13 @@ public class Paciente {
         this.urgencia = urgencia; 
     }
 
+    public EstadoPaciente getEstadoPaciente(){
+        return estado;
+    }
+
+    public void setEstadoPaciente(EstadoPaciente estado){
+        this.estado = estado; 
+    }
     public ListaEnlazada<String> getCaracteristicas() { 
         return caracteristicas; 
     }
@@ -46,29 +54,33 @@ public class Paciente {
     public boolean eliminarCaracteristica(String caracteristica) {
         return caracteristicas.remover(caracteristica);
     }
+    
 
    
   //  public LocalDateTime getHoraLlegada() { return horaLlegada; }
 
   //  public long minutosEsperando(LocalDateTime momento) { }
-  
-        @Override
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(nombre).append(" (ID: ").append(id).append(") - ").append(urgencia);
+        sb.append(nombre).append(" (ID: ").append(id).append(") - ");
+        sb.append(urgencia == null ? "sin clasificar" : urgencia.name());
         sb.append(" - Caracteristicas: ");
-        if (caracteristicas.esVacio()) {
-            sb.append("ninguna");
-        } else {
-            for (int i = 0; i < caracteristicas.tamaño(); i++) {
-                if (i > 0) {
-                    sb.append(", ");
-                }
-                sb.append(caracteristicas.obtener(i));
-            }
-        }
-        return sb.toString();
+        sb.append(caracteristicas.esVacio() ? "ninguna" : caracteristicas.toString());
+    return sb.toString();
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Paciente)) return false;
+        Paciente otro = (Paciente) obj;
+        return id.equals(otro.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 
 }
