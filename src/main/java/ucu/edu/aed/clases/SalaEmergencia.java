@@ -49,13 +49,18 @@ public class SalaEmergencia {
     que nos ayuda con esto, pero como no tengo idea lo dejo por acá y me voy a dormir 😁
 
     */
-    public void listarPacientes() {
-    
+      public ListaEnlazada<Paciente> listarPacientes() {
+        return pacientesRegistrados;
     }
 
     public void listarConsultas() {
-
+    if (historialConsultas.esVacio()) {
+        System.out.println("No hay consultas registradas");
+        return;
     }
+    System.out.println("Historial de consultas:");
+    System.out.println(historialConsultas);
+}
 
     // fede revisa esto porque esto si es IA full
     public Paciente buscarPaciente(String idPaciente) {
