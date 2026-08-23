@@ -16,6 +16,11 @@ public class ListaArray<T> implements TDALista<T> {
         datos = new Object[CAPACIDAD_INICIAL];
         tamanio = 0;
     }
+    
+    public ListaArray(int capacidadInicial){
+        datos = new Object[capacidadInicial];
+        tamanio = 0;
+    }
 
     private void asegurarCapacidad(){
         if (tamanio == datos.length){
@@ -136,5 +141,17 @@ public class ListaArray<T> implements TDALista<T> {
             datos[i] = null;
         }
         tamanio = 0;
+    }
+
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < tamanio; i++){
+            sb.append(datos[i]);
+            if (i < tamanio - 1){
+                sb.append(", ");
+            }
+        }
+        return sb.toString();
     }
 }
