@@ -1,0 +1,74 @@
+package ucu.edu.aed.clases;
+
+import java.time.LocalDateTime;
+import ucu.edu.aed.implementaciones.ListaEnlazada;
+
+public class Paciente {
+
+    private final String id;
+    private final String nombre;
+    private final ListaEnlazada<String> caracteristicas;
+    private NivelUrgencia urgencia;
+ // private final LocalDateTime horaLlegada;
+
+    public Paciente(String id, String nombre, NivelUrgencia urgencia) {
+        this.id = id;
+        this.nombre = nombre;
+        this.caracteristicas = new ListaEnlazada<>();
+        this.urgencia = urgencia;
+//      this.horaLlegada = LocalDateTime.now();
+    }
+
+    public String getId() { 
+        return id; 
+    }
+
+    public String getNombre() { 
+        return nombre; 
+    }
+
+    public NivelUrgencia getUrgencia() { 
+        return urgencia; 
+    }
+
+    public void setUrgencia(NivelUrgencia urgencia) { 
+        this.urgencia = urgencia; 
+    }
+
+    public ListaEnlazada<String> getCaracteristicas() { 
+        return caracteristicas; 
+    }
+
+   public void agregarCaracteristica(String caracteristicaNueva) {
+        caracteristicas.agregar(caracteristicaNueva);
+    }
+
+    public boolean eliminarCaracteristica(String caracteristica) {
+        return caracteristicas.remover(caracteristica);
+    }
+
+   
+  //  public LocalDateTime getHoraLlegada() { return horaLlegada; }
+
+  //  public long minutosEsperando(LocalDateTime momento) { }
+  
+        @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(nombre).append(" (ID: ").append(id).append(") - ").append(urgencia);
+        sb.append(" - Caracteristicas: ");
+        if (caracteristicas.esVacio()) {
+            sb.append("ninguna");
+        } else {
+            for (int i = 0; i < caracteristicas.tamaño(); i++) {
+                if (i > 0) {
+                    sb.append(", ");
+                }
+                sb.append(caracteristicas.obtener(i));
+            }
+        }
+        return sb.toString();
+    }
+
+
+}
