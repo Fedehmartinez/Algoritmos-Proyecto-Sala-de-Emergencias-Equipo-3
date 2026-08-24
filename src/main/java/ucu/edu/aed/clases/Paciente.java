@@ -16,7 +16,6 @@ public class Paciente {
         this.caracteristicas = new ListaEnlazada<>();
         this.urgencia = null; // Se asigna la urgencia más adelante, cuando se agregue a la cola de prioridad
         this.estado = EstadoPaciente.REGISTRADO;
-
     }
 
     public String getId() { 
