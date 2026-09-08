@@ -133,15 +133,16 @@ public class SalaEmergencia {
     }
 
     private int indiceBinario(String idPaciente) {
-        int lo = 0, hi = pacientesRegistrados.tamaño() - 1;
-        while (lo <= hi) {
-            int medio = (lo + hi) / 2;
+        int primero = 0;
+        int ultimo = pacientesRegistrados.tamaño() - 1;
+        while (primero <= ultimo) {
+            int medio = (primero + ultimo) / 2;
             int cmp = pacientesRegistrados.obtener(medio).getId().compareTo(idPaciente);
             if (cmp == 0) return medio;
-            if (cmp < 0) lo = medio + 1;
-            else hi = medio - 1;
+            if (cmp < 0) primero = medio + 1;
+            else ultimo = medio - 1;
         }
-        return -(lo + 1); // no está; se inserta al final.
+        return -(primero + 1); // no está; se inserta al final.
     }
 
 }
