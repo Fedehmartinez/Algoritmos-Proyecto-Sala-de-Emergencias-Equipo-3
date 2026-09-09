@@ -85,8 +85,6 @@ public class AVLImpl<T extends Comparable<T>> extends ArbolBinarioBusqueda<T> {
             return null;
         }
 
-        TDAElemento<T> tmp = nodo;
-
         if (criterio.compareTo(nodo.getDato()) < 0) {
 
             nodo.setHijoIzquierdo(eliminarAVL(nodo.getHijoIzquierdo(), criterio));
@@ -96,12 +94,17 @@ public class AVLImpl<T extends Comparable<T>> extends ArbolBinarioBusqueda<T> {
             nodo.setHijoDerecho(eliminarAVL(nodo.getHijoDerecho(), criterio));
         }
         else {
-            tmp = quitarNodoAVL(nodo);
+            nodo = quitarNodoAVL(nodo);
         }
 
-        if (tmp == null) {
+        if (nodo == null) {
             return null;
         }
+
+        return balancearTrasEliminar(nodo);
+    }
+
+    private TDAElemento<T> balancearTrasEliminar(TDAElemento<T> tmp) {
 
         actualizarAltura(tmp);
 
@@ -141,19 +144,22 @@ public class AVLImpl<T extends Comparable<T>> extends ArbolBinarioBusqueda<T> {
         if (nodo.getHijoDerecho() == null) {
             return nodo.getHijoIzquierdo();
         }
-        TDAElemento<T> elHijo = nodo.getHijoIzquierdo();
-        TDAElemento<T> elPadre = nodo;
-        while (elHijo.getHijoDerecho() != null) {
-            elPadre = elHijo;
-            elHijo = elHijo.getHijoDerecho();
+        // El predecesor (el mas a la derecha del subarbol izquierdo) se saca
+        // reusando la misma eliminacion recursiva, para que las alturas y el
+        // balanceo se actualicen correctamente en todo el camino, no solo en
+        // el padre inmediato del predecesor.
+        TDAElemento<T> elPredecesor = masALaDerecha(nodo.getHijoIzquierdo());
+        TDAElemento<T> nuevaIzquierda = eliminarAVL(nodo.getHijoIzquierdo(), elPredecesor.getDato());
+        elPredecesor.setHijoIzquierdo(nuevaIzquierda);
+        elPredecesor.setHijoDerecho(nodo.getHijoDerecho());
+        return balancearTrasEliminar(elPredecesor);
+    }
+
+    private TDAElemento<T> masALaDerecha(TDAElemento<T> nodo) {
+        while (nodo.getHijoDerecho() != null) {
+            nodo = nodo.getHijoDerecho();
         }
-        if (elPadre != nodo) {
-            elPadre.setHijoDerecho(elHijo.getHijoIzquierdo());
-            actualizarAltura(elPadre);
-            elHijo.setHijoIzquierdo(nodo.getHijoIzquierdo());
-        }
-        elHijo.setHijoDerecho(nodo.getHijoDerecho());
-        return elHijo;
+        return nodo;
     }
 
     private void actualizarAltura(TDAElemento<T> nodo) {

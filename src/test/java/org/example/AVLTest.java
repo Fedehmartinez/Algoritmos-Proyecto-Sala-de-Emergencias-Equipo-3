@@ -6,6 +6,7 @@ import java.util.List;
 import junit.framework.TestCase;
 import ucu.edu.aed.implementaciones.AVLImpl;
 import ucu.edu.aed.implementaciones.ArbolBinarioBusqueda;
+import ucu.edu.aed.tda.TDAElemento;
 
 public class AVLTest extends TestCase {
 
@@ -21,6 +22,31 @@ public class AVLTest extends TestCase {
         for (int i = 1; i < inorden.size(); i++){
             assertTrue("debe seguir ordenado: " + inorden, inorden.get(i - 1) < inorden.get(i));
         }
+    }
+
+    // Recorre el arbol de verdad para calcular la altura, sin confiar en el
+    // valor que el AVL tiene cacheado en cada nodo.
+    private int alturaReal(TDAElemento<Integer> nodo){
+        if (nodo == null){
+            return 0;
+        }
+        return 1 + Math.max(alturaReal(nodo.getHijoIzquierdo()), alturaReal(nodo.getHijoDerecho()));
+    }
+
+    // Verifica, en cada nodo, que la altura cacheada coincida con la real y
+    // que el balance (usando la altura real) este entre -1 y 1.
+    private void assertBalanceado(TDAElemento<Integer> nodo){
+        if (nodo == null){
+            return;
+        }
+        int real = alturaReal(nodo);
+        assertEquals("altura cacheada desactualizada en el nodo " + nodo.getDato(),
+                real, nodo.altura());
+        int balance = alturaReal(nodo.getHijoIzquierdo()) - alturaReal(nodo.getHijoDerecho());
+        assertTrue("nodo " + nodo.getDato() + " desbalanceado, balance real=" + balance,
+                balance >= -1 && balance <= 1);
+        assertBalanceado(nodo.getHijoIzquierdo());
+        assertBalanceado(nodo.getHijoDerecho());
     }
 
     public void testEsVacioEnArbolNuevo(){
@@ -237,11 +263,47 @@ public class AVLTest extends TestCase {
 
         assertEquals(presentes.size(), avl.cantidadNodos());
         assertOrdenado(avl);
+        assertBalanceado(avl.obtenerRaiz());
         double alturaMaximaEsperada = Math.log(presentes.size() + 1) / Math.log(2) * 2 + 2;
         assertTrue("altura demasiado alta para un AVL: " + avl.altura(), avl.altura() <= alturaMaximaEsperada);
 
         for (Integer valor : presentes){
             assertNotNull("deberia encontrarse " + valor, avl.buscar(valor));
+        }
+    }
+
+    // El predecesor de un nodo con dos hijos (el mas a la derecha de su
+    // subarbol izquierdo) puede estar a varios niveles de profundidad, no
+    // solo como hijo directo. Si al desengancharlo no se actualiza la
+    // altura en todo ese camino (no solo en el padre inmediato del
+    // predecesor), el arbol queda desbalanceado sin que nada lo detecte.
+    // Insertar todas las claves y despues eliminarlas todas, en varios
+    // ordenes, genera ese escenario con una probabilidad muy alta.
+    public void testEliminarTodoEnVariosOrdenesQuedaSiempreBalanceado(){
+        java.util.Random random = new java.util.Random(7);
+
+        for (int intento = 0; intento < 30; intento++){
+            List<Integer> claves = new ArrayList<>();
+            for (int i = 0; i < 80; i++){
+                claves.add(i);
+            }
+            java.util.Collections.shuffle(claves, random);
+
+            AVLImpl<Integer> unAvl = new AVLImpl<>();
+            for (int c : claves){
+                unAvl.insertar(c);
+            }
+
+            List<Integer> ordenEliminar = new ArrayList<>(claves);
+            java.util.Collections.shuffle(ordenEliminar, random);
+
+            for (int c : ordenEliminar){
+                assertTrue("deberia poder eliminar " + c, unAvl.eliminar(c));
+                assertBalanceado(unAvl.obtenerRaiz());
+            }
+
+            assertEquals(0, unAvl.cantidadNodos());
+            assertTrue(unAvl.esVacio());
         }
     }
 }
