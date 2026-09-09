@@ -64,6 +64,24 @@ public class ListaArray<T> implements TDALista<T> {
         return (T) datos[index];
     }
 
+    /**
+     * Reemplaza el elemento de la posición indicada y devuelve el que estaba.
+     *
+     * <p>A diferencia de agregar(index, elem), no desplaza nada: la lista conserva
+     * su tamaño y sólo cambia el contenido de esa posición.</p>
+     *
+     * <p>No está declarado en TDALista para no modificar la interfaz que usa el resto
+     * del equipo.</p>
+     */
+    public T establecer(int index, T elem){
+        if (index < 0 || index >= tamanio){
+            throw new IndexOutOfBoundsException();
+        }
+        T anterior = (T) datos[index];
+        datos[index] = elem;
+        return anterior;
+    }
+
     @Override
     public T remover(int index){
         if (index < 0 || index >= tamanio){
