@@ -2,7 +2,19 @@ package ucu.edu.aed.clases;
 
 import ucu.edu.aed.implementaciones.ListaEnlazada;
 
-public class Paciente {
+/**
+ * Un paciente de la sala de emergencias.
+ *
+ * <p>Su orden natural es por id, que es el criterio de <i>identidad</i>: dos pacientes
+ * son el mismo si comparten el documento. Ese es el orden con el que se guarda en el
+ * árbol de pacientes registrados.</p>
+ *
+ * <p>La <i>prioridad</i> de atención es otro criterio distinto, y no vive acá: la
+ * define un {@code Comparator} externo (POR_URGENCIA) que usa el heap de espera. Que
+ * identidad y prioridad sean criterios separados es deliberado; un paciente no cambia
+ * de identidad cuando cambia de urgencia.</p>
+ */
+public class Paciente implements Comparable<Paciente> {
 
     private final String id;
     private final String nombre;
@@ -61,6 +73,34 @@ public class Paciente {
         sb.append(" - Caracteristicas: ");
         sb.append(caracteristicas.esVacio() ? "ninguna" : caracteristicas.toString());
     return sb.toString();
+    }
+
+    /**
+     * Orden natural por id, consistente con {@link #equals(Object)}:
+     * {@code compareTo(otro) == 0} si y sólo si {@code equals(otro)}.
+     */
+    @Override
+    public int compareTo(Paciente otro) {
+        return id.compareTo(otro.id);
+    }
+
+    /**
+     * Criterio de búsqueda por documento, para usar con las estructuras de búsqueda.
+     *
+     * <p>El árbol baja comparando el criterio contra el dato de cada nodo, así que el
+     * criterio <b>tiene que ordenar igual que el árbol</b>. Si no, la búsqueda se va
+     * por la rama equivocada y no encuentra un paciente que sí está. Por eso conviene
+     * pedirlo siempre por acá y no armarlo a mano en cada llamador.</p>
+     *
+     * {@snippet :
+     * Paciente encontrado = pacientesRegistrados.buscar(Paciente.porId("A1"));
+     *}
+     */
+    public static Comparable<Paciente> porId(String id) {
+        if (id == null) {
+            throw new IllegalArgumentException("Debe haber un id");
+        }
+        return otro -> id.compareTo(otro.getId());
     }
 
     @Override
