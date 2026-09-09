@@ -212,9 +212,8 @@ public class SalaEmergencia {
     }
 
     public TDALista<EventoClinico> eventosEnRango(LocalDateTime desde, LocalDateTime hasta) {
-        return eventosPorFecha.enRango(
-                desde == null ? null : EventoClinico.porFecha(desde),
-                hasta == null ? null : EventoClinico.porFecha(hasta));
+        return eventosPorFecha.enRango(desde == null ? null : EventoClinico.porFecha(desde),
+        hasta == null ? null : EventoClinico.porFecha(hasta));
     }
 
     public int cantidadEpisodios() {

@@ -1,7 +1,6 @@
 package org.example;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 
 import ucu.edu.aed.clases.EstadoPaciente;

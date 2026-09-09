@@ -118,20 +118,20 @@ public class CatalogoDiagnosticosTest extends TestCase {
         }
     }
 
-    public void testUnCodigoEsDiagnosticable(){
-        assertTrue(catalogo.esDiagnosticable("I21"));
+    public void testUnCodigoTieneNivelCodigo(){
+        assertEquals(NivelCatalogo.CODIGO, catalogo.buscarNodo("I21").getNivel());
     }
 
-    public void testUnCapituloNoEsDiagnosticable(){
-        assertFalse(catalogo.esDiagnosticable("I"));
+    public void testUnCapituloTieneNivelCapitulo(){
+        assertEquals(NivelCatalogo.CAPITULO, catalogo.buscarNodo("I").getNivel());
     }
 
-    public void testUnGrupoNoEsDiagnosticable(){
-        assertFalse(catalogo.esDiagnosticable("I20-I25"));
+    public void testUnGrupoTieneNivelGrupo(){
+        assertEquals(NivelCatalogo.GRUPO, catalogo.buscarNodo("I20-I25").getNivel());
     }
 
-    public void testUnCodigoInexistenteNoEsDiagnosticable(){
-        assertFalse(catalogo.esDiagnosticable("NOPE"));
+    public void testUnCodigoInexistenteNoSeEncuentra(){
+        assertNull(catalogo.buscarNodo("NOPE"));
     }
 
     public void testCodigosBajoUnCapituloTraeTodosLosDeSusGrupos(){

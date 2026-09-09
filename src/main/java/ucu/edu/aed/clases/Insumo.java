@@ -39,7 +39,7 @@ public class Insumo {
 
     @Override
     public String toString() {
-        return nombre + " x" + cantidad + " ($" + String.format("%.2f", costoTotal()) + ")";
+        return nombre + " x" + cantidad + "$ "+ getCostoUnitario()+" = "+ costoTotal();
     }
 
     @Override

@@ -7,17 +7,17 @@ import ucu.edu.aed.tda.TDALista;
 
 public class CatalogoDiagnosticos {
 
-    private static final String CODIGO_RAIZ = "__RAIZ_CATALOGO__";
+    private static final String codigoRaiz = "Raiz";
 
     private final ArbolGenerico<NodoCatalogo> arbol;
 
     public CatalogoDiagnosticos() {
         this.arbol = new ArbolGenerico<>();
-        this.arbol.insertarRaiz(new NodoCatalogo(CODIGO_RAIZ, "Catalogo", NivelCatalogo.RAIZ));
+        this.arbol.insertarRaiz(new NodoCatalogo(codigoRaiz, "Catalogo", NivelCatalogo.RAIZ));
     }
 
     public boolean agregarCapitulo(String codigo, String nombre) {
-        return agregarBajo(CODIGO_RAIZ, NivelCatalogo.RAIZ, codigo, nombre, NivelCatalogo.CAPITULO);
+        return agregarBajo(codigoRaiz, NivelCatalogo.RAIZ, codigo, nombre, NivelCatalogo.CAPITULO);
     }
 
     public boolean agregarGrupo(String codigoCapitulo, String codigo, String nombre) {
@@ -28,8 +28,7 @@ public class CatalogoDiagnosticos {
         return agregarBajo(codigoGrupo, NivelCatalogo.GRUPO, codigo, nombre, NivelCatalogo.CODIGO);
     }
 
-    private boolean agregarBajo(String codigoPadre, NivelCatalogo nivelPadreEsperado,
-                                String codigo, String nombre, NivelCatalogo nivelNuevo) {
+    private boolean agregarBajo(String codigoPadre, NivelCatalogo nivelPadreEsperado, String codigo, String nombre, NivelCatalogo nivelNuevo) {
         NodoCatalogo padre = buscarNodo(codigoPadre);
         if (padre == null) {
             throw new NoSuchElementException("No existe " + codigoPadre + " en el catalogo");
@@ -37,8 +36,7 @@ public class CatalogoDiagnosticos {
         if (padre.getNivel() != nivelPadreEsperado) {
             throw new IllegalArgumentException(codigoPadre + " no es un " + nivelPadreEsperado);
         }
-        return arbol.insertar(NodoCatalogo.porCodigo(codigoPadre),
-                new NodoCatalogo(codigo, nombre, nivelNuevo));
+        return arbol.insertar(NodoCatalogo.porCodigo(codigoPadre), new NodoCatalogo(codigo, nombre, nivelNuevo));
     }
 
     public NodoCatalogo buscarNodo(String codigo) {
@@ -46,11 +44,6 @@ public class CatalogoDiagnosticos {
             throw new IllegalArgumentException("Debe haber un codigo");
         }
         return arbol.buscar(NodoCatalogo.porCodigo(codigo));
-    }
-
-    public boolean esDiagnosticable(String codigo) {
-        NodoCatalogo nodo = buscarNodo(codigo);
-        return nodo != null && nodo.getNivel() == NivelCatalogo.CODIGO;
     }
 
     public TDALista<NodoCatalogo> codigosBajo(String codigo) {

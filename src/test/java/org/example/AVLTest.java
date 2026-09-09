@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.TestCase;
-
 import ucu.edu.aed.implementaciones.AVLImpl;
 import ucu.edu.aed.implementaciones.ArbolBinarioBusqueda;
 

@@ -1,7 +1,6 @@
 package org.example;
 
 import junit.framework.TestCase;
-
 import ucu.edu.aed.implementaciones.ArbolBinario;
 
 public class ArbolBinarioTest extends TestCase {

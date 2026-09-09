@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import junit.framework.TestCase;
-
 import ucu.edu.aed.implementaciones.ArbolBinarioBusqueda;
 import ucu.edu.aed.tda.TDALista;
 

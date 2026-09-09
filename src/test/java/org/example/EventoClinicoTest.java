@@ -3,7 +3,6 @@ package org.example;
 import java.time.LocalDateTime;
 
 import junit.framework.TestCase;
-
 import ucu.edu.aed.clases.EstadoActual;
 import ucu.edu.aed.clases.EventoClinico;
 import ucu.edu.aed.clases.Insumo;

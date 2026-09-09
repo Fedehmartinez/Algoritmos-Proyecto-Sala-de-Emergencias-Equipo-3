@@ -4,8 +4,6 @@ import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 
 import junit.framework.TestCase;
-
-import ucu.edu.aed.clases.Insumo;
 import ucu.edu.aed.clases.Episodio;
 import ucu.edu.aed.clases.EstadoActual;
 import ucu.edu.aed.clases.EventoClinico;

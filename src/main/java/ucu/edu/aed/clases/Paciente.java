@@ -92,13 +92,10 @@ public class Paciente implements Comparable<Paciente> {
             throw new IllegalArgumentException("Debe haber un episodio");
         }
         if (!episodio.getPaciente().getId().equals(id)) {
-            throw new IllegalArgumentException(
-                    "El episodio es de otro paciente: " + episodio.getPaciente().getId());
+            throw new IllegalArgumentException("El episodio es de otro paciente: " + episodio.getPaciente().getId());
         }
         if (episodioActual != null) {
-            throw new IllegalStateException(
-                    "El paciente " + id + " ya tiene el episodio "
-                            + episodioActual.getIdEpisodio() + " abierto");
+            throw new IllegalStateException("El paciente " + id + " ya tiene el episodio " + episodioActual.getIdEpisodio() + " abierto");
         }
         episodios.insertar(episodio);
         this.episodioActual = episodio;
