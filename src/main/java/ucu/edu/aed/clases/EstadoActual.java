@@ -1,6 +1,6 @@
 package ucu.edu.aed.clases;
 
-public enum EstadoEpisodio {
+public enum EstadoActual {
     ABIERTO,
     CERRADO
 }

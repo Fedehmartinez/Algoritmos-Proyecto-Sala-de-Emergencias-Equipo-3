@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import junit.framework.TestCase;
 
-import ucu.edu.aed.clases.EstadoEvento;
+import ucu.edu.aed.clases.EstadoActual;
 import ucu.edu.aed.clases.EventoClinico;
 import ucu.edu.aed.clases.Insumo;
 import ucu.edu.aed.clases.TipoEvento;
@@ -25,7 +25,7 @@ public class EventoClinicoTest extends TestCase {
     }
 
     public void testEventoNuevoQuedaAbierto(){
-        assertEquals(EstadoEvento.ABIERTO, evento.getEstado());
+        assertEquals(EstadoActual.ABIERTO, evento.getEstado());
         assertTrue(evento.estaAbierto());
         assertNull(evento.getFechaCierre());
     }
@@ -131,7 +131,7 @@ public class EventoClinicoTest extends TestCase {
 
     public void testCerrarDejaEstadoFechaYDuracion(){
         assertTrue(evento.cerrar(T0.plusMinutes(45)));
-        assertEquals(EstadoEvento.CERRADO, evento.getEstado());
+        assertEquals(EstadoActual.CERRADO, evento.getEstado());
         assertFalse(evento.estaAbierto());
         assertEquals(T0.plusMinutes(45), evento.getFechaCierre());
         assertEquals(45L, evento.duracionMinutos());

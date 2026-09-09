@@ -15,7 +15,7 @@ public class EventoClinico implements Comparable<EventoClinico> {
     private final LocalDateTime fecha;
     private final ListaEnlazada<Insumo> insumos;
     private final ListaEnlazada<String> codigosDiagnostico;
-    private EstadoEvento estado;
+    private EstadoActual estado;
     private LocalDateTime fechaCierre;
 
     public EventoClinico(String idEvento, String idPaciente, TipoEvento tipo,
@@ -39,7 +39,7 @@ public class EventoClinico implements Comparable<EventoClinico> {
         this.fecha = fecha;
         this.insumos = new ListaEnlazada<>();
         this.codigosDiagnostico = new ListaEnlazada<>();
-        this.estado = EstadoEvento.ABIERTO;
+        this.estado = EstadoActual.ABIERTO;
         this.fechaCierre = null;
     }
 
@@ -63,7 +63,7 @@ public class EventoClinico implements Comparable<EventoClinico> {
         return fecha;
     }
 
-    public EstadoEvento getEstado() {
+    public EstadoActual getEstado() {
         return estado;
     }
 
@@ -72,7 +72,7 @@ public class EventoClinico implements Comparable<EventoClinico> {
     }
 
     public boolean estaAbierto() {
-        return estado == EstadoEvento.ABIERTO;
+        return estado == EstadoActual.ABIERTO;
     }
 
     public ListaEnlazada<Insumo> getInsumos() {
@@ -114,10 +114,10 @@ public class EventoClinico implements Comparable<EventoClinico> {
         if (momento.isBefore(fecha)) {
             throw new IllegalArgumentException("El cierre no puede ser anterior a la apertura");
         }
-        if (estado == EstadoEvento.CERRADO) {
+        if (estado == EstadoActual.CERRADO) {
             return false;
         }
-        this.estado = EstadoEvento.CERRADO;
+        this.estado = EstadoActual.CERRADO;
         this.fechaCierre = momento;
         return true;
     }

@@ -20,11 +20,10 @@ public class Main {
 
         Episodio episodio = sala.atenderSiguiente("EP1", "dolor toracico", T0);
         String idPaciente = episodio.getPaciente().getId();
-        sala.registrarEvento(idPaciente, "EP1-E0", "E1",
-                TipoEvento.ESTUDIO, "electrocardiograma", T0.plusMinutes(10));
-        sala.registrarEvento(idPaciente, "E1", "E2",
-                TipoEvento.PROCEDIMIENTO, "cateterismo", T0.plusMinutes(30));
-        System.out.println("Eventos del episodio: " + episodio.cantidadEventos());
+        sala.registrarEvento(idPaciente, "EP1-E0",
+                new EventoClinico("E1", idPaciente, TipoEvento.ESTUDIO, "electrocardiograma", T0.plusMinutes(10)));
+        sala.registrarEvento(idPaciente, "E1",
+                new EventoClinico("E2", idPaciente, TipoEvento.PROCEDIMIENTO, "cateterismo", T0.plusMinutes(30)));
 
         sala.agregarInsumo(idPaciente, "E2", new Insumo("cateter", 8000.0, 1));
         System.out.printf("Costo del episodio: %.2f%n", episodio.costoTotal());

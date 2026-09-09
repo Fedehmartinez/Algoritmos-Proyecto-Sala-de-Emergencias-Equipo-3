@@ -81,6 +81,24 @@ public class CatalogoDiagnosticosTest extends TestCase {
         }
     }
 
+    public void testAgregarCodigoBajoOtroCodigoLanzaExcepcion(){
+        try {
+            catalogo.agregarCodigo("I21", "I99", "codigo");
+            fail("Debia lanzar excepcion");
+        } catch (IllegalArgumentException e) {
+
+        }
+    }
+
+    public void testAgregarGrupoBajoOtroGrupoLanzaExcepcion(){
+        try {
+            catalogo.agregarGrupo("I20-I25", "G1", "grupo");
+            fail("Debia lanzar excepcion");
+        } catch (IllegalArgumentException e) {
+
+        }
+    }
+
     public void testCodigoDuplicadoEnOtraRamaNoSeAgrega(){
 
         assertFalse(catalogo.agregarCodigo("I60-I69", "I21", "otro nombre"));

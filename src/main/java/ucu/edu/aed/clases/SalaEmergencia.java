@@ -149,12 +149,6 @@ public class SalaEmergencia {
         return agregado;
     }
 
-    public boolean registrarEvento(String idPaciente, String idEventoPadre, String idEvento,
-                                   TipoEvento tipo, String descripcion, LocalDateTime momento) {
-        return registrarEvento(idPaciente, idEventoPadre,
-                new EventoClinico(idEvento, idPaciente, tipo, descripcion, momento));
-    }
-
     public void agregarInsumo(String idPaciente, String idEvento, Insumo insumo) {
         episodioEnCursoDe(idPaciente).agregarInsumo(idEvento, insumo);
     }
@@ -173,10 +167,6 @@ public class SalaEmergencia {
 
     public double costoDelEpisodioEnCurso(String idPaciente) {
         return episodioEnCursoDe(idPaciente).costoTotal();
-    }
-
-    public long duracionDe(String idPaciente, String idEvento) {
-        return episodioEnCursoDe(idPaciente).duracionAcumuladaMinutos(idEvento);
     }
 
     public Episodio cerrarEpisodio(String idPaciente, LocalDateTime momento) {
@@ -211,9 +201,9 @@ public class SalaEmergencia {
                 hasta == null ? null : Episodio.porFecha(hasta));
     }
 
-    public TDALista<Episodio> episodiosDePacienteEnRango(String idPaciente,
-                                                        LocalDateTime desde,
-                                                        LocalDateTime hasta) {
+    public TDALista<Episodio> episodiosEnRango(String idPaciente,
+                                               LocalDateTime desde,
+                                               LocalDateTime hasta) {
         Paciente paciente = buscarPaciente(idPaciente);
         if (paciente == null) {
             throw new NoSuchElementException("Paciente no encontrado: " + idPaciente);

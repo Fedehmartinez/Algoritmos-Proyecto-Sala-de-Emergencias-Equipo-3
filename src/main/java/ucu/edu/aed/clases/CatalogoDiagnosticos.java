@@ -17,32 +17,28 @@ public class CatalogoDiagnosticos {
     }
 
     public boolean agregarCapitulo(String codigo, String nombre) {
-        return arbol.insertar(NodoCatalogo.porCodigo(CODIGO_RAIZ),
-                new NodoCatalogo(codigo, nombre, NivelCatalogo.CAPITULO));
+        return agregarBajo(CODIGO_RAIZ, NivelCatalogo.RAIZ, codigo, nombre, NivelCatalogo.CAPITULO);
     }
 
     public boolean agregarGrupo(String codigoCapitulo, String codigo, String nombre) {
-        NodoCatalogo capitulo = buscarNodo(codigoCapitulo);
-        if (capitulo == null) {
-            throw new NoSuchElementException("No existe el capitulo " + codigoCapitulo);
-        }
-        if (capitulo.getNivel() != NivelCatalogo.CAPITULO) {
-            throw new IllegalArgumentException(codigoCapitulo + " no es un capitulo");
-        }
-        return arbol.insertar(NodoCatalogo.porCodigo(codigoCapitulo),
-                new NodoCatalogo(codigo, nombre, NivelCatalogo.GRUPO));
+        return agregarBajo(codigoCapitulo, NivelCatalogo.CAPITULO, codigo, nombre, NivelCatalogo.GRUPO);
     }
 
     public boolean agregarCodigo(String codigoGrupo, String codigo, String nombre) {
-        NodoCatalogo grupo = buscarNodo(codigoGrupo);
-        if (grupo == null) {
-            throw new NoSuchElementException("No existe el grupo " + codigoGrupo);
+        return agregarBajo(codigoGrupo, NivelCatalogo.GRUPO, codigo, nombre, NivelCatalogo.CODIGO);
+    }
+
+    private boolean agregarBajo(String codigoPadre, NivelCatalogo nivelPadreEsperado,
+                                String codigo, String nombre, NivelCatalogo nivelNuevo) {
+        NodoCatalogo padre = buscarNodo(codigoPadre);
+        if (padre == null) {
+            throw new NoSuchElementException("No existe " + codigoPadre + " en el catalogo");
         }
-        if (grupo.getNivel() != NivelCatalogo.GRUPO) {
-            throw new IllegalArgumentException(codigoGrupo + " no es un grupo");
+        if (padre.getNivel() != nivelPadreEsperado) {
+            throw new IllegalArgumentException(codigoPadre + " no es un " + nivelPadreEsperado);
         }
-        return arbol.insertar(NodoCatalogo.porCodigo(codigoGrupo),
-                new NodoCatalogo(codigo, nombre, NivelCatalogo.CODIGO));
+        return arbol.insertar(NodoCatalogo.porCodigo(codigoPadre),
+                new NodoCatalogo(codigo, nombre, nivelNuevo));
     }
 
     public NodoCatalogo buscarNodo(String codigo) {

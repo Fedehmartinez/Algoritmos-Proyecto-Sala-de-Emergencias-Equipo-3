@@ -7,7 +7,7 @@ import junit.framework.TestCase;
 
 import ucu.edu.aed.clases.Insumo;
 import ucu.edu.aed.clases.Episodio;
-import ucu.edu.aed.clases.EstadoEpisodio;
+import ucu.edu.aed.clases.EstadoActual;
 import ucu.edu.aed.clases.EventoClinico;
 import ucu.edu.aed.clases.Insumo;
 import ucu.edu.aed.clases.Paciente;
@@ -50,10 +50,8 @@ public class EpisodioTest extends TestCase {
     }
 
     public void testEpisodioNuevoTieneSoloLaConsultaInicial(){
-        assertEquals(1, episodio.cantidadEventos());
-        assertEquals(1, episodio.profundidad());
         assertEquals("E1", episodio.getConsultaInicial().getIdEvento());
-        assertEquals(EstadoEpisodio.ABIERTO, episodio.getEstado());
+        assertEquals(EstadoActual.ABIERTO, episodio.getEstado());
         assertTrue(episodio.estaAbierto());
         assertNull(episodio.getFechaCierre());
     }
@@ -98,7 +96,6 @@ public class EpisodioTest extends TestCase {
 
     public void testRegistrarEventoLoCuelgaDeSuOrigen(){
         assertTrue(episodio.registrarEvento("E1", ev("E2", TipoEvento.ESTUDIO, 10)));
-        assertEquals(2, episodio.cantidadEventos());
         assertEquals("E2", ids(episodio.derivacionesDe("E1")));
     }
 
@@ -107,13 +104,6 @@ public class EpisodioTest extends TestCase {
         episodio.registrarEvento("E1", ev("E6", TipoEvento.ESTUDIO, 10));
         episodio.registrarEvento("E1", ev("E7", TipoEvento.INTERCONSULTA, 15));
         assertEquals("E2,E6,E7", ids(episodio.derivacionesDe("E1")));
-    }
-
-    public void testLaProfundidadNoTieneLimiteFijado(){
-        armarArbolCompleto();
-        assertEquals(6, episodio.cantidadEventos());
-
-        assertEquals(5, episodio.profundidad());
     }
 
     public void testTodoLoQueDerivoDeUnEvento(){
@@ -134,7 +124,6 @@ public class EpisodioTest extends TestCase {
     public void testNoSeRegistraDosVecesElMismoEvento(){
         episodio.registrarEvento("E1", ev("E2", TipoEvento.ESTUDIO, 10));
         assertFalse(episodio.registrarEvento("E1", ev("E2", TipoEvento.ESTUDIO, 10)));
-        assertEquals(2, episodio.cantidadEventos());
     }
 
     public void testNoSeRegistraUnEventoDeOtroPaciente(){
@@ -155,7 +144,8 @@ public class EpisodioTest extends TestCase {
     }
 
     public void testRegistrarEventoArmandoloEnElEpisodio(){
-        assertTrue(episodio.registrarEvento("E1", "E2", TipoEvento.ESTUDIO, "ecg", T0.plusMinutes(10)));
+        assertTrue(episodio.registrarEvento("E1",
+                new EventoClinico("E2", "P1", TipoEvento.ESTUDIO, "ecg", T0.plusMinutes(10))));
         EventoClinico creado = episodio.buscarEvento("E2");
         assertNotNull(creado);
 
@@ -181,7 +171,6 @@ public class EpisodioTest extends TestCase {
         episodio.registrarEvento("E1", ev("E2", TipoEvento.ESTUDIO, 10));
         episodio.cerrarEvento("E2", T0.plusMinutes(20));
         assertTrue(episodio.registrarEvento("E1", ev("E3", TipoEvento.ESTUDIO, 30)));
-        assertEquals(3, episodio.cantidadEventos());
     }
 
     public void testAgregarInsumoDesdeElEpisodio(){
@@ -284,7 +273,7 @@ public class EpisodioTest extends TestCase {
         episodio.cerrarEvento("E6", T0.plusMinutes(40));
 
         assertTrue(episodio.cerrarEpisodio(T0.plusMinutes(160)));
-        assertEquals(EstadoEpisodio.CERRADO, episodio.getEstado());
+        assertEquals(EstadoActual.CERRADO, episodio.getEstado());
         assertFalse(episodio.estaAbierto());
         assertEquals(T0.plusMinutes(160), episodio.getFechaCierre());
     }
@@ -380,8 +369,7 @@ public class EpisodioTest extends TestCase {
         assertTrue(a.compareTo(b) < 0);
     }
 
-    public void testPorIdYPorFechaComoCriterios(){
-        assertEquals(0, Episodio.porId("EP1").compareTo(episodio));
+    public void testPorFechaComoCriterio(){
         assertEquals(0, Episodio.porFecha(T0).compareTo(episodio));
         assertTrue(Episodio.porFecha(T0.plusMinutes(1)).compareTo(episodio) > 0);
     }

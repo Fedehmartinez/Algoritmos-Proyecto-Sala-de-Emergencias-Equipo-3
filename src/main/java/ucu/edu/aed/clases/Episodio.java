@@ -13,7 +13,7 @@ public class Episodio implements Comparable<Episodio> {
     private final Paciente paciente;
     private final ArbolGenerico<EventoClinico> arbol;
     private final LocalDateTime fechaApertura;
-    private EstadoEpisodio estado;
+    private EstadoActual estado;
     private LocalDateTime fechaCierre;
 
     public Episodio(String idEpisodio, Paciente paciente, EventoClinico consultaInicial) {
@@ -35,7 +35,7 @@ public class Episodio implements Comparable<Episodio> {
         this.arbol = new ArbolGenerico<>();
         this.arbol.insertarRaiz(consultaInicial);
         this.fechaApertura = consultaInicial.getFecha();
-        this.estado = EstadoEpisodio.ABIERTO;
+        this.estado = EstadoActual.ABIERTO;
         this.fechaCierre = null;
     }
 
@@ -55,55 +55,37 @@ public class Episodio implements Comparable<Episodio> {
         return fechaCierre;
     }
 
-    public EstadoEpisodio getEstado() {
+    public EstadoActual getEstado() {
         return estado;
     }
 
     public boolean estaAbierto() {
-        return estado == EstadoEpisodio.ABIERTO;
+        return estado == EstadoActual.ABIERTO;
     }
 
     public EventoClinico getConsultaInicial() {
         return arbol.obtenerRaiz().getDato();
     }
 
-    public int cantidadEventos() {
-        return arbol.cantidadNodos();
-    }
-
-    public int profundidad() {
-        return arbol.altura();
-    }
 
     public boolean registrarEvento(String idEventoPadre, EventoClinico evento) {
         if (evento == null) {
             throw new IllegalArgumentException("Debe haber un evento");
         }
-        if (estado == EstadoEpisodio.CERRADO) {
-            throw new IllegalStateException(
-                    "El episodio " + idEpisodio + " ya esta cerrado");
+        if (estado == EstadoActual.CERRADO) {
+            throw new IllegalStateException("El episodio " + idEpisodio + " ya esta cerrado");
         }
         if (!evento.getIdPaciente().equals(paciente.getId())) {
-            throw new IllegalArgumentException(
-                    "El evento es de otro paciente: " + evento.getIdPaciente());
+            throw new IllegalArgumentException("El evento es de otro paciente: " + evento.getIdPaciente());
         }
         EventoClinico padre = buscarEvento(idEventoPadre);
         if (padre == null) {
-            throw new NoSuchElementException(
-                    "No existe el evento origen " + idEventoPadre + " en este episodio");
+            throw new NoSuchElementException("No existe el evento origen " + idEventoPadre + " en este episodio");
         }
         if (!padre.estaAbierto()) {
-            throw new IllegalStateException(
-                    "El evento origen " + idEventoPadre + " ya esta cerrado: "
-                            + "no se le pueden colgar derivaciones nuevas");
+            throw new IllegalStateException("El evento origen " + idEventoPadre + " ya esta cerrado: " + "no se le pueden colgar derivaciones nuevas");
         }
         return arbol.insertar(EventoClinico.porId(idEventoPadre), evento);
-    }
-
-    public boolean registrarEvento(String idEventoPadre, String idEvento, TipoEvento tipo,
-                                   String descripcion, LocalDateTime momento) {
-        return registrarEvento(idEventoPadre,
-                new EventoClinico(idEvento, paciente.getId(), tipo, descripcion, momento));
     }
 
     public void agregarInsumo(String idEvento, Insumo insumo) {
@@ -112,8 +94,7 @@ public class Episodio implements Comparable<Episodio> {
             throw new NoSuchElementException("No existe el evento " + idEvento);
         }
         if (!evento.estaAbierto()) {
-            throw new IllegalStateException(
-                    "El evento " + idEvento + " ya esta cerrado: no admite mas insumos");
+            throw new IllegalStateException("El evento " + idEvento + " ya esta cerrado: no admite mas insumos");
         }
         evento.agregarInsumo(insumo);
     }
@@ -168,11 +149,11 @@ public class Episodio implements Comparable<Episodio> {
     }
 
     public boolean cerrarEpisodio(LocalDateTime momento) {
-        if (estado == EstadoEpisodio.CERRADO) {
+        if (estado == EstadoActual.CERRADO) {
             return false;
         }
         cerrarEvento(getConsultaInicial().getIdEvento(), momento);
-        this.estado = EstadoEpisodio.CERRADO;
+        this.estado = EstadoActual.CERRADO;
         this.fechaCierre = momento;
         return true;
     }
@@ -249,13 +230,6 @@ public class Episodio implements Comparable<Episodio> {
         return idEpisodio.compareTo(otro.idEpisodio);
     }
 
-    public static Comparable<Episodio> porId(String idEpisodio) {
-        if (idEpisodio == null) {
-            throw new IllegalArgumentException("Debe haber un id de episodio");
-        }
-        return otro -> idEpisodio.compareTo(otro.getIdEpisodio());
-    }
-
     public static Comparable<Episodio> porFecha(LocalDateTime fecha) {
         if (fecha == null) {
             throw new IllegalArgumentException("Debe haber una fecha");
@@ -265,8 +239,7 @@ public class Episodio implements Comparable<Episodio> {
 
     @Override
     public String toString() {
-        return "Episodio " + idEpisodio + " de " + paciente.getNombre()
-                + " (" + estado + ") - " + cantidadEventos() + " eventos";
+        return "Episodio " + idEpisodio + " de " + paciente.getNombre() + " (" + estado + ")";
     }
 
     @Override

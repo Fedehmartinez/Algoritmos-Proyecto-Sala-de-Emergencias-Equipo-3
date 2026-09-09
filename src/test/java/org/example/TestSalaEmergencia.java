@@ -292,7 +292,6 @@ public class TestSalaEmergencia {
     sala.registrarPaciente("Ana", "A1");
     sala.abrirEpisodio("A1", "EP1", "dolor", T0);
     assertTrue(sala.registrarEvento("A1", "EP1-E0", evento("A2", "A1", 10)));
-    assertEquals(2, sala.episodioEnCursoDe("A1").cantidadEventos());
   }
 
   @Test(expected = IllegalStateException.class)
@@ -305,9 +304,8 @@ public class TestSalaEmergencia {
   public void registrarEventoArmandoloEnLaSala() {
     sala.registrarPaciente("Ana", "A1");
     sala.abrirEpisodio("A1", "EP1", "dolor", T0);
-    assertTrue(sala.registrarEvento("A1", "EP1-E0", "E1",
-        TipoEvento.ESTUDIO, "electrocardiograma", T0.plusMinutes(10)));
-    assertEquals(2, sala.episodioEnCursoDe("A1").cantidadEventos());
+    assertTrue(sala.registrarEvento("A1", "EP1-E0",
+        new EventoClinico("E1", "A1", TipoEvento.ESTUDIO, "electrocardiograma", T0.plusMinutes(10))));
   }
 
   @Test(expected = IllegalStateException.class)
@@ -348,13 +346,13 @@ public class TestSalaEmergencia {
     sala.registrarEvento("A1", "EP1-E0", evento("E1", "A1", 10));
     sala.registrarEvento("A1", "E1", evento("E2", "A1", 20));
 
-    assertEquals(0L, sala.duracionDe("A1", "E1"));
+    assertEquals(0L, sala.episodioEnCursoDe("A1").duracionAcumuladaMinutos("E1"));
 
     sala.cerrarEvento("A1", "E2", T0.plusMinutes(50));
     sala.cerrarEvento("A1", "E1", T0.plusMinutes(60));
 
-    assertEquals(30L, sala.duracionDe("A1", "E2"));
-    assertEquals(80L, sala.duracionDe("A1", "E1"));
+    assertEquals(30L, sala.episodioEnCursoDe("A1").duracionAcumuladaMinutos("E2"));
+    assertEquals(80L, sala.episodioEnCursoDe("A1").duracionAcumuladaMinutos("E1"));
   }
 
   @Test
@@ -394,8 +392,10 @@ public class TestSalaEmergencia {
     sala.agregarPacienteACola(sala.buscarPaciente("A1"), NivelUrgencia.CRITICO);
 
     sala.atenderSiguiente("EP1", "dolor toracico", T0);
-    sala.registrarEvento("A1", "EP1-E0", "E1", TipoEvento.ESTUDIO, "ecg", T0.plusMinutes(10));
-    sala.registrarEvento("A1", "E1", "E2", TipoEvento.PROCEDIMIENTO, "cateter", T0.plusMinutes(30));
+    sala.registrarEvento("A1", "EP1-E0",
+        new EventoClinico("E1", "A1", TipoEvento.ESTUDIO, "ecg", T0.plusMinutes(10)));
+    sala.registrarEvento("A1", "E1",
+        new EventoClinico("E2", "A1", TipoEvento.PROCEDIMIENTO, "cateter", T0.plusMinutes(30)));
     sala.agregarInsumo("A1", "E2", new Insumo("cateter", 8000.0, 1));
 
     sala.cerrarEvento("A1", "E2", T0.plusMinutes(60));
@@ -403,7 +403,6 @@ public class TestSalaEmergencia {
     Episodio cerrado = sala.cerrarEpisodio("A1", T0.plusMinutes(80));
 
     assertFalse(cerrado.estaAbierto());
-    assertEquals(3, cerrado.cantidadEventos());
     assertEquals(8000.0, cerrado.costoTotal(), 0.0001);
     assertEquals(EstadoPaciente.ATENDIDO, sala.buscarPaciente("A1").getEstadoPaciente());
     assertEquals(0, sala.cantidadEnEspera());
@@ -510,7 +509,7 @@ public class TestSalaEmergencia {
     sala.abrirEpisodio("A1", "EPA", "x", T0);
     sala.abrirEpisodio("B1", "EPB", "y", T0.plusMinutes(1));
 
-    TDALista<Episodio> deAna = sala.episodiosDePacienteEnRango("A1", null, null);
+    TDALista<Episodio> deAna = sala.episodiosEnRango("A1", null, null);
     assertEquals(1, deAna.tamaño());
     assertEquals("EPA", deAna.obtener(0).getIdEpisodio());
 
@@ -519,7 +518,7 @@ public class TestSalaEmergencia {
 
   @Test(expected = NoSuchElementException.class)
   public void episodiosDeUnPacienteInexistenteLanzaExcepcion() {
-    sala.episodiosDePacienteEnRango("NOPE", null, null);
+    sala.episodiosEnRango("NOPE", null, null);
   }
 
   @Test
@@ -567,8 +566,8 @@ public class TestSalaEmergencia {
     sala.registrarPaciente("Ana", "A1");
     sala.abrirEpisodio("A1", "EPA", "dolor", T0);
     sala.registrarEvento("A1", "EPA-E0", evento("EA1", "A1", 10));
-    sala.registrarEvento("A1", "EA1", "EA2",
-        TipoEvento.PROCEDIMIENTO, "cateter", T0.plusMinutes(20));
+    sala.registrarEvento("A1", "EA1",
+        new EventoClinico("EA2", "A1", TipoEvento.PROCEDIMIENTO, "cateter", T0.plusMinutes(20)));
 
     assertEquals(3, sala.cantidadEventos());
   }
