@@ -5,7 +5,6 @@ import java.util.NoSuchElementException;
 
 import junit.framework.TestCase;
 
-import ucu.edu.aed.clases.CodigoDiagnostico;
 import ucu.edu.aed.clases.Insumo;
 import ucu.edu.aed.clases.Episodio;
 import ucu.edu.aed.clases.EstadoEpisodio;
@@ -15,18 +14,6 @@ import ucu.edu.aed.clases.Paciente;
 import ucu.edu.aed.clases.TipoEvento;
 import ucu.edu.aed.tda.TDALista;
 
-/**
- * El árbol que arma la mayoría de los casos:
- *
- * <pre>
- *   E1 consulta inicial
- *   ├── E2 estudio
- *   │   └── E3 interconsulta
- *   │       └── E4 procedimiento
- *   │           └── E5 complicacion
- *   └── E6 estudio
- * </pre>
- */
 public class EpisodioTest extends TestCase {
 
     private static final LocalDateTime T0 = LocalDateTime.of(2026, 9, 9, 8, 0);
@@ -43,7 +30,6 @@ public class EpisodioTest extends TestCase {
         return new EventoClinico(id, "P1", tipo, "descripcion de " + id, T0.plusMinutes(minuto));
     }
 
-    /** Arma el árbol completo del comentario de la clase. */
     private void armarArbolCompleto(){
         episodio.registrarEvento("E1", ev("E2", TipoEvento.ESTUDIO, 10));
         episodio.registrarEvento("E2", ev("E3", TipoEvento.INTERCONSULTA, 30));
@@ -63,8 +49,6 @@ public class EpisodioTest extends TestCase {
         return sb.toString();
     }
 
-    // ---------- apertura ----------
-
     public void testEpisodioNuevoTieneSoloLaConsultaInicial(){
         assertEquals(1, episodio.cantidadEventos());
         assertEquals(1, episodio.profundidad());
@@ -83,7 +67,7 @@ public class EpisodioTest extends TestCase {
             new Episodio("EP9", paciente, null);
             fail("un episodio no puede existir sin su consulta inicial");
         } catch (IllegalArgumentException esperada){
-            // ok
+
         }
     }
 
@@ -93,7 +77,7 @@ public class EpisodioTest extends TestCase {
             new Episodio("EP9", paciente, ajena);
             fail("la consulta inicial tiene que ser del mismo paciente");
         } catch (IllegalArgumentException esperada){
-            // ok
+
         }
     }
 
@@ -102,17 +86,15 @@ public class EpisodioTest extends TestCase {
             new Episodio(" ", paciente, ev("E1", TipoEvento.CONSULTA_INICIAL, 0));
             fail("deberia rechazar un id vacio");
         } catch (IllegalArgumentException esperada){
-            // ok
+
         }
         try {
             new Episodio("EP9", null, ev("E1", TipoEvento.CONSULTA_INICIAL, 0));
             fail("deberia rechazar un episodio sin paciente");
         } catch (IllegalArgumentException esperada){
-            // ok
+
         }
     }
-
-    // ---------- registro de eventos ----------
 
     public void testRegistrarEventoLoCuelgaDeSuOrigen(){
         assertTrue(episodio.registrarEvento("E1", ev("E2", TipoEvento.ESTUDIO, 10)));
@@ -130,7 +112,7 @@ public class EpisodioTest extends TestCase {
     public void testLaProfundidadNoTieneLimiteFijado(){
         armarArbolCompleto();
         assertEquals(6, episodio.cantidadEventos());
-        // E1 -> E2 -> E3 -> E4 -> E5
+
         assertEquals(5, episodio.profundidad());
     }
 
@@ -145,7 +127,7 @@ public class EpisodioTest extends TestCase {
             episodio.registrarEvento("NO_EXISTE", ev("E2", TipoEvento.ESTUDIO, 10));
             fail("no deberia poder colgar de un evento que no esta");
         } catch (NoSuchElementException esperada){
-            // ok
+
         }
     }
 
@@ -161,7 +143,7 @@ public class EpisodioTest extends TestCase {
             episodio.registrarEvento("E1", ajeno);
             fail("el evento tiene que ser del mismo paciente");
         } catch (IllegalArgumentException esperada){
-            // ok
+
         }
     }
 
@@ -176,17 +158,12 @@ public class EpisodioTest extends TestCase {
         assertTrue(episodio.registrarEvento("E1", "E2", TipoEvento.ESTUDIO, "ecg", T0.plusMinutes(10)));
         EventoClinico creado = episodio.buscarEvento("E2");
         assertNotNull(creado);
-        // el id de paciente lo pone el episodio, no hay que repetirlo
+
         assertEquals("P1", creado.getIdPaciente());
         assertEquals(TipoEvento.ESTUDIO, creado.getTipo());
         assertEquals("ecg", creado.getDescripcion());
     }
 
-    /**
-     * Si a un evento ya cerrado se le pudiera colgar una derivación abierta, quedaría un
-     * evento CERRADO con un descendiente ABIERTO, que es justo lo que la regla de cierre
-     * prohíbe.
-     */
     public void testNoSeLePuedenColgarDerivacionesAUnEventoCerrado(){
         episodio.registrarEvento("E1", ev("E2", TipoEvento.ESTUDIO, 10));
         episodio.cerrarEvento("E2", T0.plusMinutes(20));
@@ -194,20 +171,18 @@ public class EpisodioTest extends TestCase {
             episodio.registrarEvento("E2", ev("E3", TipoEvento.COMPLICACION, 30));
             fail("no deberia aceptar derivaciones de un evento cerrado");
         } catch (IllegalStateException esperada){
-            // ok
+
         }
         assertTrue(episodio.queImpideCerrar("E2").esVacio());
     }
 
     public void testUnEventoCerradoNoInvalidaAlResto(){
-        // cerrar E2 no impide seguir colgando de la raiz, que sigue abierta
+
         episodio.registrarEvento("E1", ev("E2", TipoEvento.ESTUDIO, 10));
         episodio.cerrarEvento("E2", T0.plusMinutes(20));
         assertTrue(episodio.registrarEvento("E1", ev("E3", TipoEvento.ESTUDIO, 30)));
         assertEquals(3, episodio.cantidadEventos());
     }
-
-    // ---------- insumos ----------
 
     public void testAgregarInsumoDesdeElEpisodio(){
         armarArbolCompleto();
@@ -220,7 +195,7 @@ public class EpisodioTest extends TestCase {
             episodio.agregarInsumo("NO_EXISTE", new Insumo("x", 1.0, 1));
             fail("deberia fallar con un evento que no esta");
         } catch (NoSuchElementException esperada){
-            // ok
+
         }
     }
 
@@ -231,21 +206,15 @@ public class EpisodioTest extends TestCase {
             episodio.agregarInsumo("E2", new Insumo("gasas", 10.0, 1));
             fail("un evento cerrado ya rindio sus costos");
         } catch (IllegalStateException esperada){
-            // ok
+
         }
     }
-
-    // ---------- regla de cierre ----------
 
     public void testEnUnEpisodioReciénAbiertoNadaImpideCerrar(){
         assertTrue(episodio.queImpideCerrarEpisodio().esVacio());
         assertTrue(episodio.puedeCerrarse("E1"));
     }
 
-    /**
-     * Los bloqueantes salen en post-orden: primero lo más profundo. Es el orden en que
-     * hay que mirar el árbol para saber si algo se puede cerrar.
-     */
     public void testQueImpideCerrarDevuelveLosAbiertosEnPostOrden(){
         armarArbolCompleto();
         assertEquals("E5,E4,E3,E2,E6", ids(episodio.queImpideCerrarEpisodio()));
@@ -253,7 +222,7 @@ public class EpisodioTest extends TestCase {
 
     public void testUnEventoNoSeBloqueaASiMismo(){
         armarArbolCompleto();
-        // E5 es hoja y está abierto, pero no aparece como impedimento de sí mismo
+
         assertTrue(episodio.queImpideCerrar("E5").esVacio());
         assertTrue(episodio.puedeCerrarse("E5"));
     }
@@ -275,7 +244,7 @@ public class EpisodioTest extends TestCase {
         assertTrue(episodio.cerrarEvento("E4", T0.plusMinutes(130)));
         assertTrue(episodio.cerrarEvento("E3", T0.plusMinutes(140)));
         assertTrue(episodio.cerrarEvento("E2", T0.plusMinutes(150)));
-        // todavía queda la otra rama
+
         assertEquals("E6", ids(episodio.queImpideCerrarEpisodio()));
         assertTrue(episodio.cerrarEvento("E6", T0.plusMinutes(40)));
         assertTrue(episodio.queImpideCerrarEpisodio().esVacio());
@@ -286,7 +255,7 @@ public class EpisodioTest extends TestCase {
             episodio.cerrarEvento("NO_EXISTE", T0.plusMinutes(10));
             fail("deberia fallar con un evento que no esta");
         } catch (NoSuchElementException esperada){
-            // ok
+
         }
     }
 
@@ -295,15 +264,13 @@ public class EpisodioTest extends TestCase {
         assertFalse(episodio.cerrarEvento("E1", T0.plusMinutes(20)));
     }
 
-    // ---------- cierre del episodio ----------
-
     public void testNoSePuedeCerrarElEpisodioConEventosAbiertos(){
         armarArbolCompleto();
         try {
             episodio.cerrarEpisodio(T0.plusMinutes(200));
             fail("no deberia cerrar con eventos abiertos");
         } catch (IllegalStateException esperada){
-            // ok
+
         }
         assertTrue(episodio.estaAbierto());
     }
@@ -333,7 +300,7 @@ public class EpisodioTest extends TestCase {
             episodio.registrarEvento("E1", ev("E2", TipoEvento.ESTUDIO, 20));
             fail("no deberia aceptar eventos despues del cierre");
         } catch (IllegalStateException esperada){
-            // ok
+
         }
     }
 
@@ -344,8 +311,6 @@ public class EpisodioTest extends TestCase {
         assertEquals(5, episodio.eventosAbiertos().tamaño());
     }
 
-    // ---------- costos ----------
-
     public void testEpisodioSinInsumosNoCuestaNada(){
         armarArbolCompleto();
         assertEquals(0.0, episodio.costoTotal(), 0.0001);
@@ -353,9 +318,9 @@ public class EpisodioTest extends TestCase {
 
     public void testCostoDeUnSubarbolIncluyeAlNodoYSusDescendientes(){
         armarArbolCompleto();
-        episodio.buscarEvento("E2").agregarInsumo(new Insumo("electrodos", 150.0, 4)); // 600
-        episodio.buscarEvento("E4").agregarInsumo(new Insumo("cateter", 8000.0, 1));   // 8000
-        episodio.buscarEvento("E5").agregarInsumo(new Insumo("gasas", 25.5, 10));      // 255
+        episodio.buscarEvento("E2").agregarInsumo(new Insumo("electrodos", 150.0, 4));
+        episodio.buscarEvento("E4").agregarInsumo(new Insumo("cateter", 8000.0, 1));
+        episodio.buscarEvento("E5").agregarInsumo(new Insumo("gasas", 25.5, 10));
 
         assertEquals(8255.0, episodio.costoDe("E4"), 0.0001);
         assertEquals(8855.0, episodio.costoDe("E2"), 0.0001);
@@ -368,11 +333,9 @@ public class EpisodioTest extends TestCase {
             episodio.costoDe("NO_EXISTE");
             fail("deberia fallar con un evento que no esta");
         } catch (NoSuchElementException esperada){
-            // ok
+
         }
     }
-
-    // ---------- tiempos ----------
 
     public void testLosEventosAbiertosNoSumanTiempo(){
         armarArbolCompleto();
@@ -381,34 +344,28 @@ public class EpisodioTest extends TestCase {
 
     public void testDuracionAcumuladaSumaElSubarbol(){
         armarArbolCompleto();
-        episodio.cerrarEvento("E5", T0.plusMinutes(120)); // 90 -> 120 = 30
-        episodio.cerrarEvento("E4", T0.plusMinutes(130)); // 60 -> 130 = 70
-        episodio.cerrarEvento("E3", T0.plusMinutes(140)); // 30 -> 140 = 110
-        episodio.cerrarEvento("E2", T0.plusMinutes(150)); // 10 -> 150 = 140
+        episodio.cerrarEvento("E5", T0.plusMinutes(120));
+        episodio.cerrarEvento("E4", T0.plusMinutes(130));
+        episodio.cerrarEvento("E3", T0.plusMinutes(140));
+        episodio.cerrarEvento("E2", T0.plusMinutes(150));
         assertEquals(350L, episodio.duracionAcumuladaMinutos("E2"));
         assertEquals(100L, episodio.duracionAcumuladaMinutos("E4"));
     }
 
-    // ---------- diagnósticos ----------
-
     public void testCodigosDelEpisodioSeReunenSinRepetir(){
         armarArbolCompleto();
-        CodigoDiagnostico infarto = new CodigoDiagnostico("I21", "Infarto");
-        episodio.buscarEvento("E1").agregarCodigoDiagnostico(infarto);
-        episodio.buscarEvento("E4").agregarCodigoDiagnostico(infarto);
-        episodio.buscarEvento("E5").agregarCodigoDiagnostico(
-                new CodigoDiagnostico("R58", "Hemorragia"));
+        episodio.buscarEvento("E1").agregarCodigoDiagnostico("I21");
+        episodio.buscarEvento("E4").agregarCodigoDiagnostico("I21");
+        episodio.buscarEvento("E5").agregarCodigoDiagnostico("R58");
 
-        TDALista<CodigoDiagnostico> codigos = episodio.codigos();
+        TDALista<String> codigos = episodio.codigos();
         assertEquals(2, codigos.tamaño());
-        assertTrue(codigos.contiene(infarto));
+        assertTrue(codigos.contiene("I21"));
     }
 
     public void testEpisodioSinDiagnosticosDevuelveListaVacia(){
         assertTrue(episodio.codigos().esVacio());
     }
-
-    // ---------- comparación ----------
 
     public void testOrdenaPorFechaDeApertura(){
         Episodio temprano = new Episodio("A", paciente, ev("EA", TipoEvento.CONSULTA_INICIAL, 0));

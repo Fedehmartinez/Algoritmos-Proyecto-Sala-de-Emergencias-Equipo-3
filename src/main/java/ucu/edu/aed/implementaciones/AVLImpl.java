@@ -35,13 +35,11 @@ public class AVLImpl<T extends Comparable<T>> extends ArbolBinarioBusqueda<T> {
 
         int balance = calcularBalance(nodo);
 
-        // LL
         if (balance > 1 && dato.compareTo(nodo.getHijoIzquierdo().getDato()) < 0) {
 
             return rotacionDerecha(nodo);
         }
 
-        // LR
         if (balance > 1 && dato.compareTo(nodo.getHijoIzquierdo().getDato()) > 0) {
 
             nodo.setHijoIzquierdo(rotacionIzquierda(nodo.getHijoIzquierdo()));
@@ -49,13 +47,11 @@ public class AVLImpl<T extends Comparable<T>> extends ArbolBinarioBusqueda<T> {
             return rotacionDerecha(nodo);
         }
 
-        // RR
         if (balance < -1 && dato.compareTo(nodo.getHijoDerecho().getDato()) > 0) {
 
             return rotacionIzquierda(nodo);
         }
 
-        // RL
         if (balance < -1 && dato.compareTo(nodo.getHijoDerecho().getDato()) < 0) {
 
             nodo.setHijoDerecho(rotacionDerecha(nodo.getHijoDerecho()));
@@ -65,7 +61,6 @@ public class AVLImpl<T extends Comparable<T>> extends ArbolBinarioBusqueda<T> {
 
         return nodo;
     }
-
 
     @Override
     public boolean eliminar(Comparable<T> criterioBusqueda) {
@@ -83,7 +78,6 @@ public class AVLImpl<T extends Comparable<T>> extends ArbolBinarioBusqueda<T> {
 
         return true;
     }
-
 
     private TDAElemento<T> eliminarAVL(TDAElemento<T> nodo, Comparable<T> criterio) {
 
@@ -113,13 +107,11 @@ public class AVLImpl<T extends Comparable<T>> extends ArbolBinarioBusqueda<T> {
 
         int balance = calcularBalance(tmp);
 
-        // LL
         if (balance > 1 && calcularBalance(tmp.getHijoIzquierdo()) >= 0) {
 
             return rotacionDerecha(tmp);
         }
 
-        // LR
         if (balance > 1 && calcularBalance(tmp.getHijoIzquierdo()) < 0) {
 
             tmp.setHijoIzquierdo(rotacionIzquierda(tmp.getHijoIzquierdo()));
@@ -127,13 +119,11 @@ public class AVLImpl<T extends Comparable<T>> extends ArbolBinarioBusqueda<T> {
             return rotacionDerecha(tmp);
         }
 
-        // RR
         if (balance < -1 && calcularBalance(tmp.getHijoDerecho()) <= 0) {
 
             return rotacionIzquierda(tmp);
         }
 
-        // RL
         if (balance < -1 && calcularBalance(tmp.getHijoDerecho()) > 0) {
 
             tmp.setHijoDerecho(rotacionDerecha(tmp.getHijoDerecho()));
@@ -144,12 +134,6 @@ public class AVLImpl<T extends Comparable<T>> extends ArbolBinarioBusqueda<T> {
         return tmp;
     }
 
-    /**
-     * Quita un nodo con dos hijos reemplazándolo por su predecesor inorden,
-     * actualizando la altura cacheada de los nodos cuyos hijos cambiaron
-     * (el propio quitarNodo de Elemento no lo hace, porque esa clase nunca
-     * cachea altura).
-     */
     private TDAElemento<T> quitarNodoAVL(TDAElemento<T> nodo) {
         if (nodo.getHijoIzquierdo() == null) {
             return nodo.getHijoDerecho();
@@ -178,7 +162,6 @@ public class AVLImpl<T extends Comparable<T>> extends ArbolBinarioBusqueda<T> {
         }
     }
 
-
     private int calcularBalance(TDAElemento<T> nodo) {
 
         if (nodo == null) {
@@ -199,7 +182,6 @@ public class AVLImpl<T extends Comparable<T>> extends ArbolBinarioBusqueda<T> {
         return alturaIzq - alturaDer;
     }
 
-
     private TDAElemento<T> rotacionDerecha(TDAElemento<T> nodo) {
 
         TDAElemento<T> nuevoRaiz = nodo.getHijoIzquierdo();
@@ -213,7 +195,6 @@ public class AVLImpl<T extends Comparable<T>> extends ArbolBinarioBusqueda<T> {
 
         return nuevoRaiz;
     }
-
 
     private TDAElemento<T> rotacionIzquierda(TDAElemento<T> nodo) {
 

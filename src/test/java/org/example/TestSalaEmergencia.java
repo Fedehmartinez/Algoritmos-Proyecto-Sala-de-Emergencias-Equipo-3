@@ -16,7 +16,9 @@ import ucu.edu.aed.clases.Episodio;
 import ucu.edu.aed.clases.EstadoPaciente;
 import ucu.edu.aed.clases.EventoClinico;
 import ucu.edu.aed.clases.Insumo;
+import ucu.edu.aed.clases.NivelCatalogo;
 import ucu.edu.aed.clases.NivelUrgencia;
+import ucu.edu.aed.clases.NodoCatalogo;
 import ucu.edu.aed.clases.Paciente;
 import ucu.edu.aed.clases.SalaEmergencia;
 import ucu.edu.aed.clases.TipoEvento;
@@ -36,8 +38,6 @@ public class TestSalaEmergencia {
   private EventoClinico evento(String id, String idPaciente, int minuto) {
     return new EventoClinico(id, idPaciente, TipoEvento.ESTUDIO, "x", T0.plusMinutes(minuto));
   }
-
-  // ---------- registro de pacientes ----------
 
   @Test
   public void registrarPacienteDevuelveElPacienteConEstadoRegistrado() {
@@ -123,8 +123,6 @@ public class TestSalaEmergencia {
     assertTrue(sala.listarPacientes().contains("Ana"));
   }
 
-  // ---------- gestión de la espera ----------
-
   @Test
   public void agregarPacienteAColaLoPoneEnEspera() {
     Paciente p = sala.registrarPaciente("Ana", "A1");
@@ -180,12 +178,10 @@ public class TestSalaEmergencia {
     sala.agregarPacienteACola(leve, NivelUrgencia.LEVE);
     sala.agregarPacienteACola(moderado, NivelUrgencia.MODERADO);
 
-    // el moderado es mas urgente, saldria primero si nada cambiara
     assertEquals("M1", sala.proximoAAtender().getId());
 
     sala.cambiarPrioridad(leve, NivelUrgencia.CRITICO);
 
-    // ahora el leve, ya critico, pasa adelante
     assertEquals("L1", sala.proximoAAtender().getId());
   }
 
@@ -220,8 +216,6 @@ public class TestSalaEmergencia {
     sala.abrirEpisodio("A1", "EP1", "dolor", T0);
     sala.cambiarPrioridad(p, NivelUrgencia.CRITICO);
   }
-
-  // ---------- episodios ----------
 
   @Test
   public void abrirEpisodioPoneAlPacienteEnAtencion() {
@@ -354,11 +348,10 @@ public class TestSalaEmergencia {
     sala.registrarEvento("A1", "EP1-E0", evento("E1", "A1", 10));
     sala.registrarEvento("A1", "E1", evento("E2", "A1", 20));
 
-    // mientras estan abiertos no suman
     assertEquals(0L, sala.duracionDe("A1", "E1"));
 
-    sala.cerrarEvento("A1", "E2", T0.plusMinutes(50)); // 20 -> 50 = 30
-    sala.cerrarEvento("A1", "E1", T0.plusMinutes(60)); // 10 -> 60 = 50
+    sala.cerrarEvento("A1", "E2", T0.plusMinutes(50));
+    sala.cerrarEvento("A1", "E1", T0.plusMinutes(60));
 
     assertEquals(30L, sala.duracionDe("A1", "E2"));
     assertEquals(80L, sala.duracionDe("A1", "E1"));
@@ -405,7 +398,6 @@ public class TestSalaEmergencia {
     sala.registrarEvento("A1", "E1", "E2", TipoEvento.PROCEDIMIENTO, "cateter", T0.plusMinutes(30));
     sala.agregarInsumo("A1", "E2", new Insumo("cateter", 8000.0, 1));
 
-    // de abajo hacia arriba
     sala.cerrarEvento("A1", "E2", T0.plusMinutes(60));
     sala.cerrarEvento("A1", "E1", T0.plusMinutes(70));
     Episodio cerrado = sala.cerrarEpisodio("A1", T0.plusMinutes(80));
@@ -476,8 +468,6 @@ public class TestSalaEmergencia {
     sala.episodioEnCursoDe("A1");
   }
 
-  // ---------- consultas por fecha ----------
-
   @Test
   public void episodiosEnRangoDevuelveSoloLosDelPeriodo() {
     sala.registrarPaciente("Ana", "A1");
@@ -523,7 +513,7 @@ public class TestSalaEmergencia {
     TDALista<Episodio> deAna = sala.episodiosDePacienteEnRango("A1", null, null);
     assertEquals(1, deAna.tamaño());
     assertEquals("EPA", deAna.obtener(0).getIdEpisodio());
-    // los dos siguen en el indice global
+
     assertEquals(2, sala.episodiosEnRango(null, null).tamaño());
   }
 
@@ -545,5 +535,121 @@ public class TestSalaEmergencia {
     assertTrue(s.contains("Registrados: 1"));
     assertTrue(s.contains("En espera: 1"));
     assertTrue(s.contains("Episodios: 0"));
+    assertTrue(s.contains("Eventos: 0"));
+    assertTrue(s.contains("Codigos en catalogo: 0"));
+  }
+
+  @Test
+  public void eventosEnRangoDevuelveLosDeTodosLosEpisodiosYPacientes() {
+    sala.registrarPaciente("Ana", "A1");
+    sala.registrarPaciente("Beto", "B1");
+    sala.abrirEpisodio("A1", "EPA", "dolor", T0);
+    sala.abrirEpisodio("B1", "EPB", "fiebre", T0.plusMinutes(5));
+    sala.registrarEvento("A1", "EPA-E0", evento("EA1", "A1", 10));
+
+    TDALista<EventoClinico> enRango = sala.eventosEnRango(T0, T0.plusMinutes(10));
+    assertEquals(3, enRango.tamaño());
+  }
+
+  @Test
+  public void eventosEnRangoRespetaLosExtremos() {
+    sala.registrarPaciente("Ana", "A1");
+    sala.abrirEpisodio("A1", "EPA", "dolor", T0);
+    sala.registrarEvento("A1", "EPA-E0", evento("EA1", "A1", 30));
+
+    assertEquals(1, sala.eventosEnRango(T0, T0).tamaño());
+    assertEquals(2, sala.eventosEnRango(null, null).tamaño());
+    assertTrue(sala.eventosEnRango(T0.plusMinutes(100), T0.plusMinutes(200)).esVacio());
+  }
+
+  @Test
+  public void cantidadEventosCuentaTodosLosEventosDeLaSala() {
+    sala.registrarPaciente("Ana", "A1");
+    sala.abrirEpisodio("A1", "EPA", "dolor", T0);
+    sala.registrarEvento("A1", "EPA-E0", evento("EA1", "A1", 10));
+    sala.registrarEvento("A1", "EA1", "EA2",
+        TipoEvento.PROCEDIMIENTO, "cateter", T0.plusMinutes(20));
+
+    assertEquals(3, sala.cantidadEventos());
+  }
+
+  private void armarCatalogo() {
+    sala.agregarCapituloDiagnostico("I", "Enfermedades del sistema circulatorio");
+    sala.agregarGrupoDiagnostico("I", "I20-I25", "Cardiopatias isquemicas");
+    sala.agregarCodigoAlCatalogo("I20-I25", "I21", "Infarto agudo de miocardio");
+  }
+
+  @Test
+  public void agregarAlCatalogoLoDejaBuscable() {
+    armarCatalogo();
+    NodoCatalogo codigo = sala.buscarEnCatalogo("I21");
+    assertNotNull(codigo);
+    assertEquals("Infarto agudo de miocardio", codigo.getNombre());
+    assertEquals(NivelCatalogo.CODIGO, codigo.getNivel());
+  }
+
+  @Test
+  public void codigosDelCatalogoPorCapituloTraeTodosSusCodigos() {
+    armarCatalogo();
+    sala.agregarCodigoAlCatalogo("I20-I25", "I25", "Cardiopatia isquemica cronica");
+    TDALista<NodoCatalogo> codigos = sala.codigosDelCatalogo("I");
+    assertEquals(2, codigos.tamaño());
+  }
+
+  @Test
+  public void toStringCuentaLosCodigosDelCatalogo() {
+    armarCatalogo();
+    assertTrue(sala.toString().contains("Codigos en catalogo: 3"));
+  }
+
+  @Test
+  public void diagnosticarAsociaElCodigoDelCatalogoAlEvento() {
+    armarCatalogo();
+    sala.registrarPaciente("Ana", "A1");
+    sala.abrirEpisodio("A1", "EP1", "dolor toracico", T0);
+
+    sala.diagnosticar("A1", "EP1-E0", "I21");
+
+    TDALista<String> codigos = sala.episodioEnCursoDe("A1").codigos();
+    assertEquals(1, codigos.tamaño());
+    assertEquals("I21", codigos.obtener(0));
+  }
+
+  @Test(expected = NoSuchElementException.class)
+  public void diagnosticarConCodigoInexistenteLanzaExcepcion() {
+    sala.registrarPaciente("Ana", "A1");
+    sala.abrirEpisodio("A1", "EP1", "dolor", T0);
+    sala.diagnosticar("A1", "EP1-E0", "NOPE");
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void diagnosticarConUnCapituloEnVezDeUnCodigoLanzaExcepcion() {
+    armarCatalogo();
+    sala.registrarPaciente("Ana", "A1");
+    sala.abrirEpisodio("A1", "EP1", "dolor", T0);
+    sala.diagnosticar("A1", "EP1-E0", "I");
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void diagnosticarConUnGrupoEnVezDeUnCodigoLanzaExcepcion() {
+    armarCatalogo();
+    sala.registrarPaciente("Ana", "A1");
+    sala.abrirEpisodio("A1", "EP1", "dolor", T0);
+    sala.diagnosticar("A1", "EP1-E0", "I20-I25");
+  }
+
+  @Test(expected = NoSuchElementException.class)
+  public void diagnosticarUnEventoInexistenteLanzaExcepcion() {
+    armarCatalogo();
+    sala.registrarPaciente("Ana", "A1");
+    sala.abrirEpisodio("A1", "EP1", "dolor", T0);
+    sala.diagnosticar("A1", "NOPE", "I21");
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void diagnosticarSinEpisodioAbiertoLanzaExcepcion() {
+    armarCatalogo();
+    sala.registrarPaciente("Ana", "A1");
+    sala.diagnosticar("A1", "EP1-E0", "I21");
   }
 }

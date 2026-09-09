@@ -16,7 +16,7 @@ public class ListaArray<T> implements TDALista<T> {
         datos = new Object[CAPACIDAD_INICIAL];
         tamanio = 0;
     }
-    
+
     public ListaArray(int capacidadInicial){
         datos = new Object[capacidadInicial];
         tamanio = 0;
@@ -64,15 +64,6 @@ public class ListaArray<T> implements TDALista<T> {
         return (T) datos[index];
     }
 
-    /**
-     * Reemplaza el elemento de la posición indicada y devuelve el que estaba.
-     *
-     * <p>A diferencia de agregar(index, elem), no desplaza nada: la lista conserva
-     * su tamaño y sólo cambia el contenido de esa posición.</p>
-     *
-     * <p>No está declarado en TDALista para no modificar la interfaz que usa el resto
-     * del equipo.</p>
-     */
     public T establecer(int index, T elem){
         if (index < 0 || index >= tamanio){
             throw new IndexOutOfBoundsException();
@@ -110,7 +101,6 @@ public class ListaArray<T> implements TDALista<T> {
     public boolean contiene(T elem){
         return indiceDe(elem) != -1;
     }
-
 
     @Override
     public int indiceDe(T elem){

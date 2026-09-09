@@ -4,7 +4,6 @@ import java.util.Comparator;
 
 import ucu.edu.aed.tda.TDAHeap;
 
-
 public class Heap<T> implements TDAHeap<T> {
 
     private static final int CAPACIDAD_INICIAL = 16;
@@ -45,9 +44,6 @@ public class Heap<T> implements TDAHeap<T> {
         return datos.obtener(0);
     }
 
-    /**
-     * Inserta en la última posición libre y flota. O(log n).
-     */
     @Override
     public boolean insertar(T dato){
         if (dato == null){
@@ -72,14 +68,6 @@ public class Heap<T> implements TDAHeap<T> {
         return minimo;
     }
 
-    /**
-     * Quita un elemento puntual, identificado por equals() (no por el comparador de
-     * prioridad, ya que dos elementos pueden empatar en prioridad sin ser el mismo).
-     *
-     * <p>Encontrarlo es O(n), recorriendo el array como en cualquier búsqueda sin
-     * índice. Una vez encontrado, se lo reemplaza por el último elemento (igual que en
-     * eliminar()) y se reacomoda con un solo flotar o hundir, según corresponda: O(log n).</p>
-     */
     @Override
     public boolean remover(T elem){
         int indice = datos.indiceDe(elem);

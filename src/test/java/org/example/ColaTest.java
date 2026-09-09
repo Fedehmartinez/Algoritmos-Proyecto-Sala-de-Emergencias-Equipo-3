@@ -33,7 +33,7 @@ public class ColaTest {
   @Test
   public void colaRecienCreadaEsVacia() {
     Cola<Integer> cola = new Cola<>();
-    
+
     assertTrue(cola.esVacio());
   }
 
@@ -57,6 +57,3 @@ public class ColaTest {
     cola.frente();
   }
 }
-
-
-

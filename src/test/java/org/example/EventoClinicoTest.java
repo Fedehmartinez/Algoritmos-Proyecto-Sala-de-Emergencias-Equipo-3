@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 
 import junit.framework.TestCase;
 
-import ucu.edu.aed.clases.CodigoDiagnostico;
 import ucu.edu.aed.clases.EstadoEvento;
 import ucu.edu.aed.clases.EventoClinico;
 import ucu.edu.aed.clases.Insumo;
@@ -24,8 +23,6 @@ public class EventoClinicoTest extends TestCase {
     private EventoClinico crear(String id, int minuto){
         return new EventoClinico(id, "P1", TipoEvento.ESTUDIO, "x", T0.plusMinutes(minuto));
     }
-
-    // ---------- construcción ----------
 
     public void testEventoNuevoQuedaAbierto(){
         assertEquals(EstadoEvento.ABIERTO, evento.getEstado());
@@ -52,7 +49,7 @@ public class EventoClinicoTest extends TestCase {
             new EventoClinico("  ", "P1", TipoEvento.ESTUDIO, "x", T0);
             fail("deberia rechazar un id vacio");
         } catch (IllegalArgumentException esperada){
-            // ok
+
         }
     }
 
@@ -61,7 +58,7 @@ public class EventoClinicoTest extends TestCase {
             new EventoClinico("E1", null, TipoEvento.ESTUDIO, "x", T0);
             fail("deberia rechazar un evento sin paciente");
         } catch (IllegalArgumentException esperada){
-            // ok
+
         }
     }
 
@@ -70,17 +67,15 @@ public class EventoClinicoTest extends TestCase {
             new EventoClinico("E1", "P1", null, "x", T0);
             fail("deberia rechazar un evento sin tipo");
         } catch (IllegalArgumentException esperada){
-            // ok
+
         }
         try {
             new EventoClinico("E1", "P1", TipoEvento.ESTUDIO, "x", null);
             fail("deberia rechazar un evento sin fecha");
         } catch (IllegalArgumentException esperada){
-            // ok
+
         }
     }
-
-    // ---------- insumos y costos ----------
 
     public void testEventoNuevoNoTieneCosto(){
         assertEquals(0.0, evento.costoInsumos(), 0.0001);
@@ -88,8 +83,8 @@ public class EventoClinicoTest extends TestCase {
     }
 
     public void testCostoEsLaSumaDeLosInsumos(){
-        evento.agregarInsumo(new Insumo("gasas", 25.5, 10));   // 255
-        evento.agregarInsumo(new Insumo("suero", 100.0, 2));   // 200
+        evento.agregarInsumo(new Insumo("gasas", 25.5, 10));
+        evento.agregarInsumo(new Insumo("suero", 100.0, 2));
         assertEquals(455.0, evento.costoInsumos(), 0.0001);
         assertEquals(2, evento.getInsumos().tamaño());
     }
@@ -99,27 +94,25 @@ public class EventoClinicoTest extends TestCase {
             evento.agregarInsumo(null);
             fail("deberia rechazar un insumo nulo");
         } catch (IllegalArgumentException esperada){
-            // ok
+
         }
     }
 
     public void testElMismoInsumoDosVecesSumaDosVeces(){
-        // a diferencia de los códigos, un insumo repetido es consumo real repetido
+
         evento.agregarInsumo(new Insumo("gasas", 10.0, 1));
         evento.agregarInsumo(new Insumo("gasas", 10.0, 1));
         assertEquals(20.0, evento.costoInsumos(), 0.0001);
     }
 
-    // ---------- diagnósticos ----------
-
     public void testAgregarCodigoDeDiagnostico(){
-        evento.agregarCodigoDiagnostico(new CodigoDiagnostico("I21", "Infarto"));
+        evento.agregarCodigoDiagnostico("I21");
         assertEquals(1, evento.getCodigosDiagnostico().tamaño());
     }
 
     public void testElMismoCodigoNoSeAgregaDosVeces(){
-        evento.agregarCodigoDiagnostico(new CodigoDiagnostico("I21", "Infarto"));
-        evento.agregarCodigoDiagnostico(new CodigoDiagnostico("I21", "Infarto"));
+        evento.agregarCodigoDiagnostico("I21");
+        evento.agregarCodigoDiagnostico("I21");
         assertEquals(1, evento.getCodigosDiagnostico().tamaño());
     }
 
@@ -128,11 +121,9 @@ public class EventoClinicoTest extends TestCase {
             evento.agregarCodigoDiagnostico(null);
             fail("deberia rechazar un codigo nulo");
         } catch (IllegalArgumentException esperada){
-            // ok
+
         }
     }
-
-    // ---------- cierre y tiempos ----------
 
     public void testEventoAbiertoNoTieneDuracion(){
         assertEquals(-1L, evento.duracionMinutos());
@@ -149,7 +140,7 @@ public class EventoClinicoTest extends TestCase {
     public void testCerrarDosVecesDevuelveFalse(){
         assertTrue(evento.cerrar(T0.plusMinutes(10)));
         assertFalse(evento.cerrar(T0.plusMinutes(20)));
-        // el primer cierre es el que vale
+
         assertEquals(T0.plusMinutes(10), evento.getFechaCierre());
     }
 
@@ -158,7 +149,7 @@ public class EventoClinicoTest extends TestCase {
             evento.cerrar(T0.minusMinutes(1));
             fail("el cierre no puede ser anterior a la apertura");
         } catch (IllegalArgumentException esperada){
-            // ok
+
         }
     }
 
@@ -166,8 +157,6 @@ public class EventoClinicoTest extends TestCase {
         assertTrue(evento.cerrar(T0));
         assertEquals(0L, evento.duracionMinutos());
     }
-
-    // ---------- comparación ----------
 
     public void testOrdenaPorFecha(){
         EventoClinico temprano = crear("E1", 0);
@@ -189,10 +178,6 @@ public class EventoClinicoTest extends TestCase {
         assertEquals(0, a.compareTo(crear("A", 5)));
     }
 
-    /**
-     * El motivo de la clave compuesta: sin el desempate por id, el AVL tomaría dos
-     * eventos simultáneos por el mismo y descartaría uno en silencio.
-     */
     public void testDosEventosSimultaneosConvivenEnElAvl(){
         AVLImpl<EventoClinico> global = new AVLImpl<>();
         assertTrue(global.insertar(crear("X1", 5)));
@@ -206,7 +191,7 @@ public class EventoClinicoTest extends TestCase {
     }
 
     public void testPorFechaIgnoraElId(){
-        // como cota de rango tiene que dar 0 contra cualquier evento de esa fecha
+
         assertEquals(0, EventoClinico.porFecha(T0).compareTo(evento));
         assertTrue(EventoClinico.porFecha(T0.minusMinutes(1)).compareTo(evento) < 0);
         assertTrue(EventoClinico.porFecha(T0.plusMinutes(1)).compareTo(evento) > 0);
@@ -217,13 +202,13 @@ public class EventoClinicoTest extends TestCase {
             EventoClinico.porId(null);
             fail("deberia rechazar un id nulo");
         } catch (IllegalArgumentException esperada){
-            // ok
+
         }
         try {
             EventoClinico.porFecha(null);
             fail("deberia rechazar una fecha nula");
         } catch (IllegalArgumentException esperada){
-            // ok
+
         }
     }
 

@@ -5,11 +5,6 @@ import java.util.function.Consumer;
 import ucu.edu.aed.tda.TDAElementoGenerico;
 import ucu.edu.aed.tda.TDALista;
 
-/**
- * Nodo de un árbol genérico (n-ario) con representación hijo izquierdo - hermano derecho.
- *
- * <p>La recursión baja por los hijos; la cadena de hermanos se recorre con un while.</p>
- */
 public class ElementoGenerico<T extends Comparable<T>> implements TDAElementoGenerico<T>{
 
     private T dato;
@@ -52,10 +47,6 @@ public class ElementoGenerico<T extends Comparable<T>> implements TDAElementoGen
         return hermanoDerecho;
     }
 
-    /**
-     * Recorre la cadena de hermanos hasta el último hijo y engancha el nuevo al final,
-     * así los hijos quedan en orden de inserción.
-     */
     @Override
     public void agregarHijo(TDAElementoGenerico<T> nuevoHijo){
         if (primerHijo == null){
@@ -70,10 +61,6 @@ public class ElementoGenerico<T extends Comparable<T>> implements TDAElementoGen
         }
     }
 
-    /**
-     * No hay criterio de orden que permita podar, así que hay que mirar todos los
-     * hijos hasta encontrarlo: la búsqueda es O(n).
-     */
     @Override
     public TDAElementoGenerico<T> buscar(Comparable<T> criterioBusqueda){
         if (criterioBusqueda.compareTo(this.dato) == 0){
@@ -90,11 +77,6 @@ public class ElementoGenerico<T extends Comparable<T>> implements TDAElementoGen
         return null;
     }
 
-    /**
-     * Si el nodo buscado es este, devuelve null para que el padre lo desenganche de la
-     * cadena de hermanos. Al desengancharlo se va también todo su subárbol, porque nadie
-     * lo apunta más.
-     */
     @Override
     public TDAElementoGenerico<T> eliminar(Comparable<T> criterioBusqueda){
         if (criterioBusqueda.compareTo(this.dato) == 0){
@@ -105,7 +87,7 @@ public class ElementoGenerico<T extends Comparable<T>> implements TDAElementoGen
         while (hijoActual != null){
             TDAElementoGenerico<T> siguienteHermano = hijoActual.getHermanoDerecho();
             if (hijoActual.eliminar(criterioBusqueda) == null){
-                // el hijo era el buscado: se saca de la cadena
+
                 hijoActual.setHermanoDerecho(null);
                 if (hermanoAnterior == null){
                     primerHijo = siguienteHermano;
@@ -160,7 +142,7 @@ public class ElementoGenerico<T extends Comparable<T>> implements TDAElementoGen
 
     @Override
     public int cantidadNodos(){
-        int contador = 1; // este nodo
+        int contador = 1;
         TDAElementoGenerico<T> hijoActual = primerHijo;
         while (hijoActual != null){
             contador = contador + hijoActual.cantidadNodos();
@@ -171,7 +153,7 @@ public class ElementoGenerico<T extends Comparable<T>> implements TDAElementoGen
 
     @Override
     public int cantidadHojas(){
-        // si no tiene hijos, es una hoja
+
         if (primerHijo == null){
             return 1;
         }
@@ -186,11 +168,11 @@ public class ElementoGenerico<T extends Comparable<T>> implements TDAElementoGen
 
     @Override
     public int cantidadNodosInternos(){
-        // si es hoja, no es interno
+
         if (primerHijo == null){
             return 0;
         }
-        int contador = 1; // este nodo sí es interno
+        int contador = 1;
         TDAElementoGenerico<T> hijoActual = primerHijo;
         while (hijoActual != null){
             contador = contador + hijoActual.cantidadNodosInternos();
@@ -207,7 +189,7 @@ public class ElementoGenerico<T extends Comparable<T>> implements TDAElementoGen
             alturaMayor = Math.max(alturaMayor, hijoActual.altura());
             hijoActual = hijoActual.getHermanoDerecho();
         }
-        // el camino más largo hacia abajo, más este nodo
+
         return 1 + alturaMayor;
     }
 
@@ -224,7 +206,7 @@ public class ElementoGenerico<T extends Comparable<T>> implements TDAElementoGen
 
     @Override
     public int obtenerNivel(Comparable<T> criterioBusqueda){
-        // este nodo es el buscado
+
         if (criterioBusqueda.compareTo(dato) == 0){
             return 0;
         }
@@ -236,7 +218,7 @@ public class ElementoGenerico<T extends Comparable<T>> implements TDAElementoGen
             }
             hijoActual = hijoActual.getHermanoDerecho();
         }
-        // no se encontró
+
         return -1;
     }
 
@@ -267,7 +249,7 @@ public class ElementoGenerico<T extends Comparable<T>> implements TDAElementoGen
             acumulador.agregar(this.dato);
             return;
         }
-        // bajo un escalón: a cada hijo le pido un nivel menos
+
         TDAElementoGenerico<T> hijoActual = primerHijo;
         while (hijoActual != null){
             hijoActual.enNivel(nivel - 1, acumulador);

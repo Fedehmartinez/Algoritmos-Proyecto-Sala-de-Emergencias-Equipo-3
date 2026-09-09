@@ -90,16 +90,6 @@ public class ArbolBinarioBusqueda<T extends Comparable<T>> extends ArbolBinario<
         return resultado;
     }
 
-    /**
-     * In-order con poda.
-     *
-     * <p>Las dos banderas son lo que evita recorrer el árbol entero. Si el dato del nodo
-     * ya es menor que {@code desde}, todo lo que cuelga a su izquierda es todavía menor
-     * y no hace falta mirarlo; lo mismo del otro lado con {@code hasta}. Sólo se baja
-     * por donde puede haber resultados.</p>
-     *
-     * <p>Los extremos {@code null} significan "sin cota de ese lado".</p>
-     */
     private void enRango(TDAElemento<T> nodo, Comparable<T> desde, Comparable<T> hasta,
                          Consumer<T> consumidor){
         if (nodo == null){

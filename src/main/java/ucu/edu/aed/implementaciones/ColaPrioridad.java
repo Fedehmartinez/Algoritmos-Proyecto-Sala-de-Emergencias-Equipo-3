@@ -54,4 +54,3 @@ public class ColaPrioridad<T> extends ListaEnlazada<T> implements TDACola<T> {
     throw new UnsupportedOperationException("La posición la determina la prioridad");
     }
 }
-

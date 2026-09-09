@@ -36,5 +36,5 @@ public class TestNivelUrgencia {
     assertTrue(NivelUrgencia.MODERADO.getTiempoMaximoEsperaMinutos()< NivelUrgencia.LEVE.getTiempoMaximoEsperaMinutos());
     assertTrue(NivelUrgencia.LEVE.getTiempoMaximoEsperaMinutos()< NivelUrgencia.NO_URGENTE.getTiempoMaximoEsperaMinutos());
   }
-  
+
 }

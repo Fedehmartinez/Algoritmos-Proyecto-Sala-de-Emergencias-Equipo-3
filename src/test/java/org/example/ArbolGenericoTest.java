@@ -5,22 +5,6 @@ import junit.framework.TestCase;
 import ucu.edu.aed.implementaciones.ArbolGenerico;
 import ucu.edu.aed.tda.TDALista;
 
-/**
- * Pruebas del árbol genérico sobre la estructura de un libro:
- *
- * <pre>
- *                            Libro
- *          ______________/__/__|__\__\______________
- *         1        2      3      4      5           6
- *      /__|__\                 /  \            /__/ \__\
- *    1.1 1.2 1.3             4.1  4.2       6.1 6.2 6.3 6.4
- *      /__|__\
- * 1.3.1 ... 1.3.4
- * </pre>
- *
- * <p>Los capítulos 2, 3 y 5 se modelan como hojas: en el diagrama original sus secciones
- * están representadas con puntos suspensivos, no omitidas por error.</p>
- */
 public class ArbolGenericoTest extends TestCase {
 
     private ArbolGenerico<String> libro;
@@ -65,8 +49,6 @@ public class ArbolGenericoTest extends TestCase {
         return resultado.toString();
     }
 
-    // ---------- estructura vacía ----------
-
     public void testArbolNuevoEsVacio(){
         ArbolGenerico<String> vacio = new ArbolGenerico<>();
         assertTrue(vacio.esVacio());
@@ -97,8 +79,6 @@ public class ArbolGenericoTest extends TestCase {
         assertEquals(0, vacio.hojasDe("1").tamaño());
     }
 
-    // ---------- un único nodo ----------
-
     public void testUnUnicoNodo(){
         ArbolGenerico<String> unico = new ArbolGenerico<>();
         assertTrue(unico.insertarRaiz("Libro"));
@@ -111,7 +91,7 @@ public class ArbolGenericoTest extends TestCase {
         assertEquals("Libro", unico.preOrderString());
         assertEquals("Libro", unico.postOrderString());
         assertEquals("Libro", unico.porNivelesString());
-        // una hoja es hoja de sí misma
+
         assertEquals("Libro", comoTexto(unico.hojasDe("Libro")));
         assertEquals(0, unico.descendientesDe("Libro").tamaño());
     }
@@ -124,8 +104,6 @@ public class ArbolGenericoTest extends TestCase {
         assertEquals(1, unico.cantidadNodos());
     }
 
-    // ---------- árbol degenerado ----------
-
     public void testArbolDegenerado(){
         ArbolGenerico<String> cadena = new ArbolGenerico<>();
         cadena.insertarRaiz("A");
@@ -136,28 +114,26 @@ public class ArbolGenericoTest extends TestCase {
         assertEquals(4, cadena.cantidadNodos());
         assertEquals(1, cadena.cantidadHojas());
         assertEquals(3, cadena.cantidadNodosInternos());
-        assertEquals(4, cadena.altura());     // altura == cantidad de nodos
-        assertEquals(1, cadena.grado());      // un hijo por nodo
-        // en un degenerado el recorrido por niveles saca un nodo por nivel
+        assertEquals(4, cadena.altura());
+        assertEquals(1, cadena.grado());
+
         assertEquals("A,B,C,D", cadena.porNivelesString());
         assertEquals("A,B,C,D", cadena.preOrderString());
         assertEquals("D,C,B,A", cadena.postOrderString());
         assertEquals(3, cadena.obtenerNivel("D"));
     }
 
-    // ---------- estructura del libro ----------
-
     public void testCantidadNodos(){
         assertEquals(20, libro.cantidadNodos());
     }
 
     public void testCantidadHojas(){
-        // 1.1, 1.2, 2, 3, 4.1, 4.2, 5, 6.1..6.4 y 1.3.1..1.3.4
+
         assertEquals(15, libro.cantidadHojas());
     }
 
     public void testCantidadNodosInternos(){
-        // Libro, 1, 1.3, 4 y 6
+
         assertEquals(5, libro.cantidadNodosInternos());
     }
 
@@ -167,16 +143,14 @@ public class ArbolGenericoTest extends TestCase {
     }
 
     public void testAltura(){
-        // Libro / capítulo / sección / subsección
+
         assertEquals(4, libro.altura());
     }
 
     public void testGrado(){
-        // el nodo más subdividido es Libro, con 6 capítulos
+
         assertEquals(6, libro.grado());
     }
-
-    // ---------- recorridos ----------
 
     public void testPreOrderString(){
         assertEquals("Libro,1,1.1,1.2,1.3,1.3.1,1.3.2,1.3.3,1.3.4,2,3,4,4.1,4.2,5,6,6.1,6.2,6.3,6.4",
@@ -189,7 +163,7 @@ public class ArbolGenericoTest extends TestCase {
     }
 
     public void testPorNivelesString(){
-        // primero el libro, después todos los capítulos, después todas las secciones
+
         assertEquals("Libro,1,2,3,4,5,6,1.1,1.2,1.3,4.1,4.2,6.1,6.2,6.3,6.4,1.3.1,1.3.2,1.3.3,1.3.4",
                      libro.porNivelesString());
     }
@@ -205,8 +179,6 @@ public class ArbolGenericoTest extends TestCase {
         }
         assertEquals(libro.porNivelesString(), porNiveles.toString());
     }
-
-    // ---------- enNivel ----------
 
     public void testEnNivelRaiz(){
         assertEquals("Libro", comoTexto(libro.enNivel(0)));
@@ -229,8 +201,6 @@ public class ArbolGenericoTest extends TestCase {
         assertEquals(0, libro.enNivel(-1).tamaño());
     }
 
-    // ---------- consultas por subárbol ----------
-
     public void testHijosDe(){
         assertEquals("1.1,1.2,1.3", comoTexto(libro.hijosDe("1")));
         assertEquals("6.1,6.2,6.3,6.4", comoTexto(libro.hijosDe("6")));
@@ -249,7 +219,7 @@ public class ArbolGenericoTest extends TestCase {
     }
 
     public void testHojasDe(){
-        // los "códigos" que cuelgan del capítulo 1, sin enumerarlos a mano
+
         assertEquals("1.1,1.2,1.3.1,1.3.2,1.3.3,1.3.4", comoTexto(libro.hojasDe("1")));
         assertEquals("6.1,6.2,6.3,6.4", comoTexto(libro.hojasDe("6")));
     }
@@ -272,8 +242,6 @@ public class ArbolGenericoTest extends TestCase {
         assertEquals("", recorrido.toString());
     }
 
-    // ---------- búsquedas ----------
-
     public void testBuscarExistente(){
         assertEquals("1.3.4", libro.buscar("1.3.4"));
         assertEquals("Libro", libro.buscar("Libro"));
@@ -293,8 +261,6 @@ public class ArbolGenericoTest extends TestCase {
     public void testObtenerNivelInexistente(){
         assertEquals(-1, libro.obtenerNivel("99"));
     }
-
-    // ---------- inserciones ----------
 
     public void testInsertarRespetaElOrdenDeInsercion(){
         libro.insertar("2", "2.1");
@@ -319,11 +285,9 @@ public class ArbolGenericoTest extends TestCase {
         assertEquals(2, libro.obtenerNivel("5.1"));
     }
 
-    // ---------- eliminaciones (en cascada) ----------
-
     public void testEliminarCapituloSeLlevaSusSecciones(){
         assertTrue(libro.eliminar("1"));
-        // se van 1, 1.1, 1.2, 1.3 y 1.3.1..1.3.4 = 8 nodos
+
         assertEquals(12, libro.cantidadNodos());
         assertNull(libro.buscar("1"));
         assertNull(libro.buscar("1.3"));
@@ -333,10 +297,10 @@ public class ArbolGenericoTest extends TestCase {
 
     public void testEliminarSeccionIntermedia(){
         assertTrue(libro.eliminar("1.3"));
-        // se van 1.3 y sus cuatro subsecciones
+
         assertEquals(15, libro.cantidadNodos());
         assertEquals("1.1,1.2", comoTexto(libro.hijosDe("1")));
-        // el árbol pierde un nivel: ya no hay subsecciones
+
         assertEquals(3, libro.altura());
     }
 

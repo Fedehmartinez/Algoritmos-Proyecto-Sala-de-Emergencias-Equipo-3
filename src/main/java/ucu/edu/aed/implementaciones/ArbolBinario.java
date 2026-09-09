@@ -142,7 +142,6 @@ public class ArbolBinario<T extends Comparable<T>> implements TDAArbolBinario<T>
         return resultado.toString();
     }
 
-
     @Override
     public void postOrder(Consumer<T> consumidor){
     if (raiz == null){
@@ -161,14 +160,6 @@ public class ArbolBinario<T extends Comparable<T>> implements TDAArbolBinario<T>
         return resultado.toString();
     }
 
-    /**
-     * Recorrido por niveles: la lista se usa como cola (FIFO).
-     *
-     * <p>Es el único recorrido que no sale solo con recursión, porque va a lo ancho y no
-     * a lo hondo. La cola guarda los nodos ya visitados cuyos hijos todavía no se
-     * visitaron; como los hijos se encolan detrás de lo que falta del nivel actual,
-     * recién salen cuando ese nivel terminó.</p>
-     */
     @Override
     public void porNiveles(Consumer<T> consumidor){
         if (raiz == null){
@@ -208,7 +199,6 @@ public class ArbolBinario<T extends Comparable<T>> implements TDAArbolBinario<T>
         return resultado.toString();
     }
 
-
     @Override
     public boolean esVacio(){
         return raiz == null;
@@ -219,7 +209,6 @@ public class ArbolBinario<T extends Comparable<T>> implements TDAArbolBinario<T>
     return cantidadNodos;
     }
 
-
     @Override
     public int cantidadHojas(){
     if (raiz == null){
@@ -227,7 +216,6 @@ public class ArbolBinario<T extends Comparable<T>> implements TDAArbolBinario<T>
     }
     return raiz.cantidadHojas();
     }
-
 
     @Override
     public int cantidadNodosInternos(){

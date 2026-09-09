@@ -1,13 +1,5 @@
 package ucu.edu.aed.clases;
 
-/**
- * Un insumo consumido durante un evento clínico.
- *
- * <p>Es un objeto de valor inmutable: se registra donde efectivamente se consume y no
- * se mueve de ahí. El costo total no se guarda como campo sino que se calcula en
- * {@link #costoTotal()}, para no tener el mismo dato dos veces y no poder
- * desincronizarlo.</p>
- */
 public class Insumo {
 
     private final String nombre;
@@ -41,9 +33,6 @@ public class Insumo {
         return cantidad;
     }
 
-    /**
-     * Costo de este insumo: el unitario por la cantidad consumida.
-     */
     public double costoTotal() {
         return costoUnitario * cantidad;
     }

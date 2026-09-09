@@ -10,15 +10,7 @@ import java.util.Arrays;
 import java.util.function.Consumer;
 
 public class FileUtils {
-    /**
-     * Ejemplo de uso
-     * FileUtils.leerLineas("./path/al/archivo/archivo.txt", linea -> {
-     * System.out.println(linea);
-     * });
-     *
-     * @param path     Ruta del archivo
-     * @param consumer función que recibe cada linea del archivo
-     */
+
     public static void leerLineas(String path, Consumer<String> consumer) {
 
         try {
@@ -36,12 +28,6 @@ public class FileUtils {
 
     }
 
-    /**
-     * Guarda contenido en el path indicado
-     *
-     * @param path      ruta de persistencia
-     * @param contenido string del contenido
-     */
     public static void escribirLineas(String path, String... contenido) {
         try {
             Files.write(Paths.get(path), Arrays.asList(contenido));
