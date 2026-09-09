@@ -15,6 +15,7 @@ public class AVLImpl<T extends Comparable<T>> extends ArbolBinarioBusqueda<T> {
         }
 
         raiz = insertarAVL(raiz, dato);
+        cantidadNodos++;
         return true;
     }
 
@@ -29,6 +30,8 @@ public class AVLImpl<T extends Comparable<T>> extends ArbolBinarioBusqueda<T> {
         else if (dato.compareTo(nodo.getDato()) > 0) {
             nodo.setHijoDerecho(insertarAVL(nodo.getHijoDerecho(), dato));
         }
+
+        actualizarAltura(nodo);
 
         int balance = calcularBalance(nodo);
 
@@ -76,6 +79,7 @@ public class AVLImpl<T extends Comparable<T>> extends ArbolBinarioBusqueda<T> {
         }
 
         raiz = eliminarAVL(raiz, criterioBusqueda);
+        cantidadNodos--;
 
         return true;
     }
@@ -98,12 +102,14 @@ public class AVLImpl<T extends Comparable<T>> extends ArbolBinarioBusqueda<T> {
             nodo.setHijoDerecho(eliminarAVL(nodo.getHijoDerecho(), criterio));
         }
         else {
-            tmp = nodo.eliminar(criterio);
+            tmp = quitarNodoAVL(nodo);
         }
 
         if (tmp == null) {
             return null;
         }
+
+        actualizarAltura(tmp);
 
         int balance = calcularBalance(tmp);
 
@@ -138,6 +144,40 @@ public class AVLImpl<T extends Comparable<T>> extends ArbolBinarioBusqueda<T> {
         return tmp;
     }
 
+    /**
+     * Quita un nodo con dos hijos reemplazándolo por su predecesor inorden,
+     * actualizando la altura cacheada de los nodos cuyos hijos cambiaron
+     * (el propio quitarNodo de Elemento no lo hace, porque esa clase nunca
+     * cachea altura).
+     */
+    private TDAElemento<T> quitarNodoAVL(TDAElemento<T> nodo) {
+        if (nodo.getHijoIzquierdo() == null) {
+            return nodo.getHijoDerecho();
+        }
+        if (nodo.getHijoDerecho() == null) {
+            return nodo.getHijoIzquierdo();
+        }
+        TDAElemento<T> elHijo = nodo.getHijoIzquierdo();
+        TDAElemento<T> elPadre = nodo;
+        while (elHijo.getHijoDerecho() != null) {
+            elPadre = elHijo;
+            elHijo = elHijo.getHijoDerecho();
+        }
+        if (elPadre != nodo) {
+            elPadre.setHijoDerecho(elHijo.getHijoIzquierdo());
+            actualizarAltura(elPadre);
+            elHijo.setHijoIzquierdo(nodo.getHijoIzquierdo());
+        }
+        elHijo.setHijoDerecho(nodo.getHijoDerecho());
+        return elHijo;
+    }
+
+    private void actualizarAltura(TDAElemento<T> nodo) {
+        if (nodo instanceof AVLElemento) {
+            ((AVLElemento<T>) nodo).actualizarAltura();
+        }
+    }
+
 
     private int calcularBalance(TDAElemento<T> nodo) {
 
@@ -168,6 +208,9 @@ public class AVLImpl<T extends Comparable<T>> extends ArbolBinarioBusqueda<T> {
         nuevoRaiz.setHijoDerecho(nodo);
         nodo.setHijoIzquierdo(subArbol);
 
+        actualizarAltura(nodo);
+        actualizarAltura(nuevoRaiz);
+
         return nuevoRaiz;
     }
 
@@ -179,6 +222,9 @@ public class AVLImpl<T extends Comparable<T>> extends ArbolBinarioBusqueda<T> {
 
         nuevoRaiz.setHijoIzquierdo(nodo);
         nodo.setHijoDerecho(subArbol);
+
+        actualizarAltura(nodo);
+        actualizarAltura(nuevoRaiz);
 
         return nuevoRaiz;
     }

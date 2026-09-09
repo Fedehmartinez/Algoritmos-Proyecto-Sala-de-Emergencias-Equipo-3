@@ -9,6 +9,7 @@ import ucu.edu.aed.tda.TDALista;
 public class ArbolBinario<T extends Comparable<T>> implements TDAArbolBinario<T> {
 
     protected TDAElemento<T> raiz;
+    protected int cantidadNodos = 0;
 
     public int getContador(){
         return 0;
@@ -52,6 +53,7 @@ public class ArbolBinario<T extends Comparable<T>> implements TDAArbolBinario<T>
             return false;
         }
         raiz = eliminarEnNodo(raiz, criterioBusqueda);
+        cantidadNodos--;
         return true;
     }
 
@@ -91,6 +93,7 @@ public class ArbolBinario<T extends Comparable<T>> implements TDAArbolBinario<T>
     @Override
     public boolean insertar(T dato){
         raiz = insertarEnNodo(raiz, dato);
+        cantidadNodos++;
         return true;
     }
 
@@ -104,7 +107,7 @@ public class ArbolBinario<T extends Comparable<T>> implements TDAArbolBinario<T>
         else if (nodo.getHijoDerecho() == null){
             nodo.setHijoDerecho(new Elemento<>(dato));
         }
-        else if (nodo.getHijoIzquierdo().cantidadNodos() <= nodo.getHijoDerecho().cantidadNodos()){
+        else if (cantidadNodos % 2 == 0){
             nodo.setHijoIzquierdo(insertarEnNodo(nodo.getHijoIzquierdo(), dato));
         }
         else{
@@ -176,10 +179,7 @@ public class ArbolBinario<T extends Comparable<T>> implements TDAArbolBinario<T>
 
     @Override
     public int cantidadNodos(){
-    if (raiz == null){
-        return 0;
-    }
-    return raiz.cantidadNodos();
+    return cantidadNodos;
     }
 
 
