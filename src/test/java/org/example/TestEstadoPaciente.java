@@ -17,7 +17,7 @@ public class TestEstadoPaciente {
   public void valueOfDevuelveElEstadoCorrecto() {
     assertEquals(EstadoPaciente.REGISTRADO, EstadoPaciente.valueOf("REGISTRADO"));
     assertEquals(EstadoPaciente.EN_ESPERA, EstadoPaciente.valueOf("EN_ESPERA"));
-    assertEquals(EstadoPaciente.EN_CONSULTORIO, EstadoPaciente.valueOf("EN_CONSULTORIO"));
+    assertEquals(EstadoPaciente.EN_ATENCION, EstadoPaciente.valueOf("EN_ATENCION"));
     assertEquals(EstadoPaciente.ATENDIDO, EstadoPaciente.valueOf("ATENDIDO"));
   }
 
@@ -26,7 +26,7 @@ public class TestEstadoPaciente {
     EstadoPaciente[] v = EstadoPaciente.values();
     assertEquals(EstadoPaciente.REGISTRADO, v[0]);
     assertEquals(EstadoPaciente.EN_ESPERA, v[1]);
-    assertEquals(EstadoPaciente.EN_CONSULTORIO, v[2]);
+    assertEquals(EstadoPaciente.EN_ATENCION, v[2]);
     assertEquals(EstadoPaciente.ATENDIDO, v[3]);
   }
 }

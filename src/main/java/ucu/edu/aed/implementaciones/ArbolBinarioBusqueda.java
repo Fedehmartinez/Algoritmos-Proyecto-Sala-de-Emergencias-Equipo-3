@@ -1,7 +1,10 @@
 package ucu.edu.aed.implementaciones;
 
+import java.util.function.Consumer;
+
 import ucu.edu.aed.tda.TDAArbolBinarioBusqueda;
 import ucu.edu.aed.tda.TDAElemento;
+import ucu.edu.aed.tda.TDALista;
 
 public class ArbolBinarioBusqueda<T extends Comparable<T>> extends ArbolBinario<T> implements TDAArbolBinarioBusqueda<T> {
 
@@ -73,5 +76,46 @@ public class ArbolBinarioBusqueda<T extends Comparable<T>> extends ArbolBinario<
             return null;
         }
         return raiz.claveMenor();
+    }
+
+    @Override
+    public void enRango(Comparable<T> desde, Comparable<T> hasta, Consumer<T> consumidor){
+        enRango(raiz, desde, hasta, consumidor);
+    }
+
+    @Override
+    public TDALista<T> enRango(Comparable<T> desde, Comparable<T> hasta){
+        TDALista<T> resultado = new ListaEnlazada<>();
+        enRango(desde, hasta, resultado::agregar);
+        return resultado;
+    }
+
+    /**
+     * In-order con poda.
+     *
+     * <p>Las dos banderas son lo que evita recorrer el árbol entero. Si el dato del nodo
+     * ya es menor que {@code desde}, todo lo que cuelga a su izquierda es todavía menor
+     * y no hace falta mirarlo; lo mismo del otro lado con {@code hasta}. Sólo se baja
+     * por donde puede haber resultados.</p>
+     *
+     * <p>Los extremos {@code null} significan "sin cota de ese lado".</p>
+     */
+    private void enRango(TDAElemento<T> nodo, Comparable<T> desde, Comparable<T> hasta,
+                         Consumer<T> consumidor){
+        if (nodo == null){
+            return;
+        }
+        boolean alcanzaElDesde = desde == null || desde.compareTo(nodo.getDato()) <= 0;
+        boolean noPasaElHasta = hasta == null || hasta.compareTo(nodo.getDato()) >= 0;
+
+        if (alcanzaElDesde){
+            enRango(nodo.getHijoIzquierdo(), desde, hasta, consumidor);
+        }
+        if (alcanzaElDesde && noPasaElHasta){
+            consumidor.accept(nodo.getDato());
+        }
+        if (noPasaElHasta){
+            enRango(nodo.getHijoDerecho(), desde, hasta, consumidor);
+        }
     }
 }
