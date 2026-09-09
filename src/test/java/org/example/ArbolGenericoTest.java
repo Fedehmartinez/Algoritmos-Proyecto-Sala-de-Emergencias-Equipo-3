@@ -1,6 +1,8 @@
-package ucu.edu.aed.implementaciones;
+package org.example;
 
 import junit.framework.TestCase;
+
+import ucu.edu.aed.implementaciones.ArbolGenerico;
 import ucu.edu.aed.tda.TDALista;
 
 /**

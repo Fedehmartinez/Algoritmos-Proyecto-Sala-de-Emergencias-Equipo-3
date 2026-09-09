@@ -89,11 +89,27 @@ public interface TDAArbolBinario<T> {
      */
     void postOrder(Consumer<T> consumidor);
 
+    /**
+     * Recorre el árbol por niveles, de arriba hacia abajo y de izquierda a derecha
+     * dentro de cada nivel. Se apoya en una estructura lineal (una cola) para ir
+     * visitando los nodos pendientes en el orden en que se van descubriendo.
+     * {@snippet :
+     * // ejemplo de uso
+     * elemento.porNiveles(dato ->{
+     *     // procesar dato
+     *     // esta función se llama tantas veces como nodos halla en el árbol
+     * });
+     *}
+     */
+    void porNiveles(Consumer<T> consumidor);
+
     String preOrderString();
 
     String postOrderString();
 
     String inOrderString();
+
+    String porNivelesString();
 
     int altura();
 

@@ -1,6 +1,8 @@
-package ucu.edu.aed.implementaciones;
+package org.example;
 
 import junit.framework.TestCase;
+
+import ucu.edu.aed.implementaciones.ArbolBinario;
 
 public class ArbolBinarioTest extends TestCase {
 
@@ -81,6 +83,34 @@ public class ArbolBinarioTest extends TestCase {
     public void testPreOrderStringEnArbolVacio(){
         ArbolBinario<Integer> vacio = new ArbolBinario<>();
         assertEquals("", vacio.preOrderString());
+    }
+
+    public void testPorNivelesString(){
+        assertEquals("1,2,3,5,7,4,6", arbol.porNivelesString());
+    }
+
+    public void testPorNivelesStringEnArbolVacio(){
+        ArbolBinario<Integer> vacio = new ArbolBinario<>();
+        assertEquals("", vacio.porNivelesString());
+    }
+
+    public void testPorNivelesConUnSoloNodo(){
+        ArbolBinario<Integer> unSoloNodo = new ArbolBinario<>();
+        unSoloNodo.insertar(10);
+        assertEquals("10", unSoloNodo.porNivelesString());
+    }
+
+    public void testPorNivelesEsLaConcatenacionDeLosNiveles(){
+        StringBuilder porNiveles = new StringBuilder();
+        for (int nivel = 0; nivel < arbol.altura(); nivel++){
+            for (int i = 0; i < arbol.enNivel(nivel).tamaño(); i++){
+                if (porNiveles.length() > 0){
+                    porNiveles.append(",");
+                }
+                porNiveles.append(arbol.enNivel(nivel).obtener(i));
+            }
+        }
+        assertEquals(arbol.porNivelesString(), porNiveles.toString());
     }
 
     public void testCompletosEnArbolVacio(){

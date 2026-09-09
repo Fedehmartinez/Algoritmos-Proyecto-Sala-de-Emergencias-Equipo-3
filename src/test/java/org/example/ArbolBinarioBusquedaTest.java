@@ -1,4 +1,4 @@
-package ucu.edu.aed.implementaciones;
+package org.example;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,6 +6,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import ucu.edu.aed.implementaciones.ArbolBinarioBusqueda;
 import ucu.edu.aed.tda.TDALista;
 
 public class ArbolBinarioBusquedaTest extends TestCase {
@@ -180,6 +181,30 @@ public class ArbolBinarioBusquedaTest extends TestCase {
     public void testPostOrderStringEnArbolVacio(){
         ArbolBinarioBusqueda<Integer> vacio = new ArbolBinarioBusqueda<>();
         assertEquals("", vacio.postOrderString());
+    }
+
+    public void testPorNivelesString(){
+        assertEquals("8,3,10,1,6,14,4,7,13", arbol.porNivelesString());
+    }
+
+    public void testPorNivelesStringEnArbolVacio(){
+        ArbolBinarioBusqueda<Integer> vacio = new ArbolBinarioBusqueda<>();
+        assertEquals("", vacio.porNivelesString());
+    }
+
+    public void testPorNivelesConUnSoloNodo(){
+        ArbolBinarioBusqueda<Integer> unSoloNodo = new ArbolBinarioBusqueda<>();
+        unSoloNodo.insertar(5);
+        assertEquals("5", unSoloNodo.porNivelesString());
+    }
+
+    public void testPorNivelesRamaDegenerada(){
+        ArbolBinarioBusqueda<Integer> ramaIzquierda = new ArbolBinarioBusqueda<>();
+        int[] claves = {10, 8, 6, 4, 2};
+        for (int clave : claves) {
+            ramaIzquierda.insertar(clave);
+        }
+        assertEquals("10,8,6,4,2", ramaIzquierda.porNivelesString());
     }
 
     public void testObtenerNivelRaiz(){

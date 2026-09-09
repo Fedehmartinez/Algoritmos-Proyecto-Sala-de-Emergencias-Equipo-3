@@ -161,6 +161,43 @@ public class ArbolBinario<T extends Comparable<T>> implements TDAArbolBinario<T>
         return resultado.toString();
     }
 
+    /**
+     * Recorrido por niveles: la lista se usa como cola (FIFO).
+     *
+     * <p>Es el único recorrido que no sale solo con recursión, porque va a lo ancho y no
+     * a lo hondo. La cola guarda los nodos ya visitados cuyos hijos todavía no se
+     * visitaron; como los hijos se encolan detrás de lo que falta del nivel actual,
+     * recién salen cuando ese nivel terminó.</p>
+     */
+    @Override
+    public void porNiveles(Consumer<T> consumidor){
+        if (raiz == null){
+            return;
+        }
+        TDALista<TDAElemento<T>> pendientes = new ListaEnlazada<>();
+        pendientes.agregar(raiz);
+        while (!pendientes.esVacio()){
+            TDAElemento<T> actual = pendientes.remover(0);
+            consumidor.accept(actual.getDato());
+            if (actual.getHijoIzquierdo() != null){
+                pendientes.agregar(actual.getHijoIzquierdo());
+            }
+            if (actual.getHijoDerecho() != null){
+                pendientes.agregar(actual.getHijoDerecho());
+            }
+        }
+    }
+
+    @Override
+    public String porNivelesString(){
+        StringBuilder resultado = new StringBuilder();
+        porNiveles(dato -> resultado.append(dato).append(","));
+        if (resultado.length() > 0){
+            resultado.setLength(resultado.length() - 1);
+        }
+        return resultado.toString();
+    }
+
     @Override
     public String inOrderString(){
         StringBuilder resultado = new StringBuilder();
