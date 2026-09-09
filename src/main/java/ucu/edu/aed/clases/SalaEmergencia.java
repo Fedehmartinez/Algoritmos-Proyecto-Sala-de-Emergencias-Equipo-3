@@ -3,7 +3,8 @@ package ucu.edu.aed.clases;
 import java.util.Comparator;
 import java.util.NoSuchElementException;
 
-import ucu.edu.aed.implementaciones.ColaPrioridad;
+import ucu.edu.aed.implementaciones.AVLImpl;
+import ucu.edu.aed.implementaciones.Heap;
 import ucu.edu.aed.implementaciones.ListaArray;
 import ucu.edu.aed.implementaciones.Pila;
 
@@ -13,14 +14,14 @@ public class SalaEmergencia {
     public static final Comparator<Paciente> POR_URGENCIA =
             Comparator.comparingInt(p -> p.getUrgencia().getTiempoMaximoEsperaMinutos());
 
-    private final ListaArray<Paciente> pacientesRegistrados;
-    private final ColaPrioridad<Paciente> esperaAtencion;
+    private final AVLImpl<Paciente> pacientesRegistrados;
+    private final Heap<Paciente> esperaAtencion;
     private final Pila<Consulta> historialConsultas;
     private final ListaArray<Paciente> consultorios;
 
     public SalaEmergencia() {
-        this.pacientesRegistrados = new ListaArray<>();
-        this.esperaAtencion = new ColaPrioridad<>(POR_URGENCIA);
+        this.pacientesRegistrados = new AVLImpl<>();
+        this.esperaAtencion = new Heap<>(POR_URGENCIA);
         this.historialConsultas = new Pila<>();
         this.consultorios = new ListaArray<>(5);
     }
@@ -29,12 +30,10 @@ public class SalaEmergencia {
         if (nombre == null || id == null) {
             throw new IllegalArgumentException("Debe haber nombre e id");
         }
-        int indice = indiceBinario(id);
-        if (indice >= 0) {
+        Paciente paciente = new Paciente(id, nombre);
+        if (!pacientesRegistrados.insertar(paciente)) {
             throw new IllegalArgumentException("Ya existe un paciente registrado con id " + id);
         }
-        Paciente paciente = new Paciente(id, nombre);
-        pacientesRegistrados.agregar(-(indice + 1), paciente);
         return paciente;
     }
 
@@ -54,14 +53,44 @@ public class SalaEmergencia {
 
     registrado.setUrgencia(urgencia);
     registrado.setEstadoPaciente(EstadoPaciente.EN_ESPERA);
-    esperaAtencion.agregar(registrado);
+    esperaAtencion.insertar(registrado);
+    }
+
+    /**
+     * Cambia la urgencia de un paciente que ya está esperando.
+     *
+     * <p>El heap no ofrece una operación de "actualizar prioridad" directa, así que se
+     * hace en tres pasos: sacarlo (rompe el invariante de orden si se le cambiara la
+     * urgencia estando adentro), reasignarle la urgencia nueva, y volver a insertarlo
+     * para que el heap lo reacomode en la posición que le corresponde.</p>
+     */
+    public void cambiarPrioridad(Paciente paciente, NivelUrgencia nuevaUrgencia) {
+        if (paciente == null) {
+            throw new IllegalArgumentException("Debe haber un paciente");
+        }
+        if (nuevaUrgencia == null) {
+            throw new IllegalArgumentException("Debe haber un nivel de urgencia");
+        }
+
+        Paciente registrado = buscarPaciente(paciente.getId());
+        if (registrado == null) {
+            throw new IllegalArgumentException(
+                    "El paciente " + paciente.getId() + " no esta registrado");
+        }
+        if (!esperaAtencion.remover(registrado)) {
+            throw new IllegalStateException(
+                    "El paciente " + registrado.getId() + " no esta en la cola de espera");
+        }
+
+        registrado.setUrgencia(nuevaUrgencia);
+        esperaAtencion.insertar(registrado);
     }
 
     public String listarPacientes() {
     if (pacientesRegistrados.esVacio()) {
         return "No hay pacientes registrados";
     }
-        return "Pacientes registrados:\n" + pacientesRegistrados;
+        return "Pacientes registrados:\n" + pacientesRegistrados.inOrderString();
     }
 
     public String listarConsultas() {
@@ -75,8 +104,7 @@ public class SalaEmergencia {
         if (idPaciente == null) {
             throw new IllegalArgumentException("Debe haber un paciente");
         }
-        int indice = indiceBinario(idPaciente);
-        return indice >= 0 ? pacientesRegistrados.obtener(indice) : null;
+        return pacientesRegistrados.buscar(Paciente.porId(idPaciente));
     }
 
     public void eliminarPaciente(String idPaciente) {
@@ -86,7 +114,7 @@ public class SalaEmergencia {
         }
         esperaAtencion.remover(paciente);
         consultorios.remover(paciente);
-        pacientesRegistrados.remover(paciente);
+        pacientesRegistrados.eliminar(Paciente.porId(idPaciente));
     }
 
     public String mostrarPacientesEnConsultorios() {
@@ -126,23 +154,10 @@ public class SalaEmergencia {
         @Override
     public String toString() {
         return "Sala de emergencias"
-                + " | Registrados: " + pacientesRegistrados.tamaño()
-                + " | En espera: " + esperaAtencion.tamaño()
+                + " | Registrados: " + pacientesRegistrados.cantidadNodos()
+                + " | En espera: " + esperaAtencion.cantidad()
                 + " | En consultorio: " + consultorios.tamaño()
                 + " | Consultas realizadas: " + historialConsultas.tamaño();
-    }
-
-    private int indiceBinario(String idPaciente) {
-        int primero = 0;
-        int ultimo = pacientesRegistrados.tamaño() - 1;
-        while (primero <= ultimo) {
-            int medio = (primero + ultimo) / 2;
-            int cmp = pacientesRegistrados.obtener(medio).getId().compareTo(idPaciente);
-            if (cmp == 0) return medio;
-            if (cmp < 0) primero = medio + 1;
-            else ultimo = medio - 1;
-        }
-        return -(primero + 1); // no está; se inserta al final.
     }
 
 }

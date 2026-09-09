@@ -8,6 +8,8 @@ public interface TDAHeap<T> {
 
     T minimo();
 
+    boolean remover(T elem);
+
     boolean esVacio();
 
     int cantidad();

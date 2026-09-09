@@ -197,6 +197,62 @@ public class TestSalaEmergencia {
   }
 
   @Test
+  public void cambiarPrioridadActualizaLaUrgencia() {
+    Paciente p = sala.registrarPaciente("Ana", "A1");
+    sala.agregarPacienteACola(p, NivelUrgencia.LEVE);
+    sala.cambiarPrioridad(p, NivelUrgencia.CRITICO);
+    assertEquals(NivelUrgencia.CRITICO, p.getUrgencia());
+  }
+
+  @Test
+  public void cambiarPrioridadReordenaLaColaDeEspera() {
+    Paciente leve = sala.registrarPaciente("Leve", "L1");
+    Paciente moderado = sala.registrarPaciente("Moderado", "M1");
+    sala.agregarPacienteACola(leve, NivelUrgencia.LEVE);
+    sala.agregarPacienteACola(moderado, NivelUrgencia.MODERADO);
+
+    // el moderado es mas urgente, entraria primero si nada cambiara
+    sala.cambiarPrioridad(leve, NivelUrgencia.CRITICO);
+
+    // ahora el leve (ya critico) tiene que entrar primero
+    sala.ingresarPaciente(sala.buscarPaciente("L1"));
+    assertEquals(EstadoPaciente.EN_CONSULTORIO, leve.getEstadoPaciente());
+    assertEquals(EstadoPaciente.EN_ESPERA, moderado.getEstadoPaciente());
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void cambiarPrioridadConPacienteNuloLanzaExcepcion() {
+    sala.cambiarPrioridad(null, NivelUrgencia.CRITICO);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void cambiarPrioridadConUrgenciaNulaLanzaExcepcion() {
+    Paciente p = sala.registrarPaciente("Ana", "A1");
+    sala.agregarPacienteACola(p, NivelUrgencia.LEVE);
+    sala.cambiarPrioridad(p, null);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void cambiarPrioridadDePacienteNoRegistradoLanzaExcepcion() {
+    Paciente fantasma = new Paciente("X9", "Fantasma");
+    sala.cambiarPrioridad(fantasma, NivelUrgencia.CRITICO);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void cambiarPrioridadDePacienteQueNoEstaEsperandoLanzaExcepcion() {
+    Paciente p = sala.registrarPaciente("Ana", "A1");
+    sala.cambiarPrioridad(p, NivelUrgencia.CRITICO);
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void cambiarPrioridadDePacienteYaEnConsultorioLanzaExcepcion() {
+    Paciente p = sala.registrarPaciente("Ana", "A1");
+    sala.agregarPacienteACola(p, NivelUrgencia.URGENTE);
+    sala.ingresarPaciente(p);
+    sala.cambiarPrioridad(p, NivelUrgencia.CRITICO);
+  }
+
+  @Test
   public void elPacienteMasUrgenteEsAtendidoPrimero() {
     Paciente leve = sala.registrarPaciente("Leve", "L1");
     Paciente critico = sala.registrarPaciente("Critico", "C1");

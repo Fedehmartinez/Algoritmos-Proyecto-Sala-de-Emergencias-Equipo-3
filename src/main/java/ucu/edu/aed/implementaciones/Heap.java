@@ -72,6 +72,36 @@ public class Heap<T> implements TDAHeap<T> {
         return minimo;
     }
 
+    /**
+     * Quita un elemento puntual, identificado por equals() (no por el comparador de
+     * prioridad, ya que dos elementos pueden empatar en prioridad sin ser el mismo).
+     *
+     * <p>Encontrarlo es O(n), recorriendo el array como en cualquier búsqueda sin
+     * índice. Una vez encontrado, se lo reemplaza por el último elemento (igual que en
+     * eliminar()) y se reacomoda con un solo flotar o hundir, según corresponda: O(log n).</p>
+     */
+    @Override
+    public boolean remover(T elem){
+        int indice = datos.indiceDe(elem);
+        if (indice == -1){
+            return false;
+        }
+        int ultimoIndice = datos.tamaño() - 1;
+        T ultimo = datos.remover(ultimoIndice);
+        if (indice == ultimoIndice){
+            return true;
+        }
+        datos.establecer(indice, ultimo);
+        int padre = (indice - 1) / 2;
+        if (indice > 0 && comparador.compare(datos.obtener(indice), datos.obtener(padre)) < 0){
+            flotar(indice);
+        }
+        else{
+            hundir(indice);
+        }
+        return true;
+    }
+
     private void flotar(int i){
         while (i > 0){
             int padre = (i - 1) / 2;

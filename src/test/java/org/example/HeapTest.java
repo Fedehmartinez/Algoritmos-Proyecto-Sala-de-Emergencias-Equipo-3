@@ -194,6 +194,67 @@ public class HeapTest extends TestCase {
         assertEquals(4, heap.cantidad());
     }
 
+    // ---------- remover un elemento puntual ----------
+
+    public void testRemoverElementoDelMedio(){
+        int[] valores = {50, 30, 70, 20, 40, 60, 80, 10, 90};
+        for (int v : valores) heap.insertar(v);
+
+        assertTrue(heap.remover(40));
+        assertEquals(8, heap.cantidad());
+        assertFalse(extraerTodo(heap).contains("40"));
+    }
+
+    public void testRemoverLaRaiz(){
+        int[] valores = {10, 20, 30, 40, 50};
+        for (int v : valores) heap.insertar(v);
+
+        assertTrue(heap.remover(10));
+        assertEquals(4, heap.cantidad());
+        assertEquals(Integer.valueOf(20), heap.minimo());
+    }
+
+    public void testRemoverElUltimoElementoInsertado(){
+        heap.insertar(5);
+        heap.insertar(3);
+        heap.insertar(8);
+        assertTrue(heap.remover(8));
+        assertEquals(2, heap.cantidad());
+    }
+
+    public void testRemoverElUnicoElemento(){
+        heap.insertar(42);
+        assertTrue(heap.remover(42));
+        assertTrue(heap.esVacio());
+    }
+
+    public void testRemoverInexistenteNoAlteraElHeap(){
+        heap.insertar(5);
+        heap.insertar(3);
+        assertFalse(heap.remover(99));
+        assertEquals(2, heap.cantidad());
+    }
+
+    public void testRemoverEnHeapVacio(){
+        assertFalse(heap.remover(5));
+    }
+
+    /**
+     * El caso que ejercita ambas ramas de remover(): sacar un elemento del medio
+     * puede requerir que su reemplazo flote (si es menor que su nuevo padre) o se
+     * hunda (si es mayor que alguno de sus nuevos hijos), y la salida completa tiene
+     * que seguir siendo la misma secuencia no decreciente de siempre.
+     */
+    public void testRemoverMantieneElInvarianteDeHeap(){
+        int[] valores = {8, 3, 5, 1, 9, 2, 7, 6, 4};
+        for (int v : valores) heap.insertar(v);
+
+        assertTrue(heap.remover(3));
+        assertTrue(heap.remover(7));
+
+        assertEquals("1,2,4,5,6,8,9", extraerTodo(heap));
+    }
+
     // ---------- duplicados ----------
 
     public void testElementosRepetidos(){
