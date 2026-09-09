@@ -25,10 +25,13 @@ package ucu.edu.aed.tda;
  * <p>El orden de salida no se materializa en la estructura: se produce de a un
  * elemento, en cada llamada a {@link #eliminar()}.</p>
  *
- * @param <T> el tipo de los elementos almacenados, que debe ser comparable porque
- *            la prioridad se decide con su {@code compareTo}
+ * <p>La prioridad la decide un {@link java.util.Comparator} entregado al construir el
+ * heap (no {@code Comparable}), para no obligar a que el tipo almacenado tenga un
+ * único orden natural propio — el mismo criterio que usa {@code ColaPrioridad}.</p>
+ *
+ * @param <T> el tipo de los elementos almacenados
  */
-public interface TDAHeap<T extends Comparable<T>> {
+public interface TDAHeap<T> {
 
     /**
      * Agrega el dato al heap. O(log n).

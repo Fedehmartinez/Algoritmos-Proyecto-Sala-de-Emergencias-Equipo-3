@@ -1,23 +1,30 @@
 package ucu.edu.aed.implementaciones;
 
+import java.util.Comparator;
+
 import ucu.edu.aed.tda.TDAHeap;
 
 
-public class Heap<T extends Comparable<T>> implements TDAHeap<T> {
+public class Heap<T> implements TDAHeap<T> {
 
     private static final int CAPACIDAD_INICIAL = 16;
 
     private ListaArray<T> datos;
+    private final Comparator<T> comparador;
 
-    public Heap(){
-        datos = new ListaArray<>(CAPACIDAD_INICIAL);
+    public Heap(Comparator<T> comparador){
+        this(CAPACIDAD_INICIAL, comparador);
     }
 
-    public Heap(int capacidadInicial){
+    public Heap(int capacidadInicial, Comparator<T> comparador){
+        if (comparador == null){
+            throw new IllegalArgumentException("El comparador no puede ser null");
+        }
         if (capacidadInicial < 1){
             capacidadInicial = 1;
         }
         datos = new ListaArray<>(capacidadInicial);
+        this.comparador = comparador;
     }
 
     @Override
@@ -68,7 +75,7 @@ public class Heap<T extends Comparable<T>> implements TDAHeap<T> {
     private void flotar(int i){
         while (i > 0){
             int padre = (i - 1) / 2;
-            if (datos.obtener(i).compareTo(datos.obtener(padre)) >= 0){
+            if (comparador.compare(datos.obtener(i), datos.obtener(padre)) >= 0){
                 return;
             }
             intercambiar(i, padre);
@@ -82,10 +89,10 @@ public class Heap<T extends Comparable<T>> implements TDAHeap<T> {
             int der = 2 * i + 2;
             int menor = i;
 
-            if (izq < datos.tamaño() && datos.obtener(izq).compareTo(datos.obtener(menor)) < 0){
+            if (izq < datos.tamaño() && comparador.compare(datos.obtener(izq), datos.obtener(menor)) < 0){
                 menor = izq;
             }
-            if (der < datos.tamaño() && datos.obtener(der).compareTo(datos.obtener(menor)) < 0){
+            if (der < datos.tamaño() && comparador.compare(datos.obtener(der), datos.obtener(menor)) < 0){
                 menor = der;
             }
             if (menor == i){

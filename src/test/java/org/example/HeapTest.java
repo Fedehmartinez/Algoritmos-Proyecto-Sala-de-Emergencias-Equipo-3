@@ -1,5 +1,7 @@
 package org.example;
 
+import java.util.Comparator;
+
 import junit.framework.TestCase;
 
 import ucu.edu.aed.implementaciones.Heap;
@@ -19,13 +21,13 @@ public class HeapTest extends TestCase {
     private Heap<Integer> heap;
 
     protected void setUp(){
-        heap = new Heap<>();
+        heap = new Heap<Integer>(Comparator.naturalOrder());
     }
 
     /**
      * Vacía el heap extrayendo de a uno y devuelve la secuencia de salida.
      */
-    private <E extends Comparable<E>> String extraerTodo(TDAHeap<E> unHeap){
+    private <E> String extraerTodo(TDAHeap<E> unHeap){
         StringBuilder resultado = new StringBuilder();
         while (!unHeap.esVacio()){
             if (resultado.length() > 0){
@@ -98,9 +100,9 @@ public class HeapTest extends TestCase {
     }
 
     public void testDistintosOrdenesDeInsercionDanLaMismaSalida(){
-        Heap<Integer> ascendente = new Heap<>();
-        Heap<Integer> descendente = new Heap<>();
-        Heap<Integer> desordenado = new Heap<>();
+        Heap<Integer> ascendente = new Heap<Integer>(Comparator.naturalOrder());
+        Heap<Integer> descendente = new Heap<Integer>(Comparator.naturalOrder());
+        Heap<Integer> desordenado = new Heap<Integer>(Comparator.naturalOrder());
 
         for (int i = 1; i <= 7; i++){
             ascendente.insertar(i);
@@ -244,7 +246,7 @@ public class HeapTest extends TestCase {
     }
 
     public void testCapacidadInicialMinima(){
-        Heap<Integer> chico = new Heap<>(1);
+        Heap<Integer> chico = new Heap<Integer>(1, Comparator.naturalOrder());
         for (int i = 5; i >= 1; i--){
             chico.insertar(i);
         }
@@ -253,7 +255,7 @@ public class HeapTest extends TestCase {
     }
 
     public void testCapacidadInicialInvalidaSeAjusta(){
-        Heap<Integer> raro = new Heap<>(0);
+        Heap<Integer> raro = new Heap<Integer>(0, Comparator.naturalOrder());
         assertTrue(raro.insertar(4));
         assertTrue(raro.insertar(2));
         assertEquals("2,4", extraerTodo(raro));
@@ -311,7 +313,7 @@ public class HeapTest extends TestCase {
     }
 
     public void testColaDePrioridadDePacientes(){
-        Heap<Paciente> guardia = new Heap<>();
+        Heap<Paciente> guardia = new Heap<Paciente>(Comparator.naturalOrder());
         guardia.insertar(new Paciente("Ana", 5, 1));      // leve, llega primero
         guardia.insertar(new Paciente("Bruno", 3, 2));    // medio
         guardia.insertar(new Paciente("Carla", 1, 3));    // crítica, llega última
@@ -325,7 +327,7 @@ public class HeapTest extends TestCase {
      * guardia. Sin ese desempate el heap no garantizaría ningún orden entre iguales.
      */
     public void testAIgualUrgenciaSaleElQueLlegoPrimero(){
-        Heap<Paciente> guardia = new Heap<>();
+        Heap<Paciente> guardia = new Heap<Paciente>(Comparator.naturalOrder());
         guardia.insertar(new Paciente("Tercero", 3, 3));
         guardia.insertar(new Paciente("Primero", 3, 1));
         guardia.insertar(new Paciente("Segundo", 3, 2));
@@ -334,7 +336,7 @@ public class HeapTest extends TestCase {
     }
 
     public void testUnCriticoSeAdelantaAUnaColaDeLeves(){
-        Heap<Paciente> guardia = new Heap<>();
+        Heap<Paciente> guardia = new Heap<Paciente>(Comparator.naturalOrder());
         for (int i = 1; i <= 20; i++){
             guardia.insertar(new Paciente("Leve" + i, 5, i));
         }
